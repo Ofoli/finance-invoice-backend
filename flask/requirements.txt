@@ -3,7 +3,6 @@ amqp==5.2.0
 aniso8601==9.0.1
 billiard==4.2.0
 blinker==1.8.2
-celery==5.4.0
 click==8.1.7
 click-didyoumean==0.3.1
 click-plugins==1.1.1
@@ -24,6 +23,7 @@ packaging==24.1
 prompt_toolkit==3.0.47
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
+psycopg2==2.9.9
 pytz==2024.1
 redis==5.0.8
 six==1.16.0

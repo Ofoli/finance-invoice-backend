@@ -1,0 +1,43 @@
+import os
+import logging
+
+from dotenv import load_dotenv
+from flask import Flask
+
+from ..config import app_config
+from ..config.extensions import init_extensions
+
+load_dotenv()
+
+
+def _create_logger(name: str, file_path: str) -> None:
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
+
+    logs_dir: str = os.path.dirname(file_path)
+    os.makedirs(logs_dir, exist_ok=True)
+
+    logger: logging.Logger = logging.getLogger(name)
+
+    if not logger.handlers:
+        handler = logging.FileHandler(file_path)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.setLevel(logging.INFO)
+        logger.propagate = False
+
+
+def create_app(config_name: str) -> Flask:
+    app = Flask(__name__)
+    app.config.from_object(app_config[config_name])
+
+    init_extensions(app)
+
+    LOGS_DIR: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+
+    _create_logger("task", file_path=os.path.join(LOGS_DIR, "task.log"))
+    _create_logger(name="syslog", file_path=os.path.join(LOGS_DIR, "syslog.log"))
+
+    return app
+
+
+app = create_app(os.environ["FLASK_ENV"])
