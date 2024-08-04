@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - fib-pg-data:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - fib-redis-data:/data
+
+  api:
+    build:
+      context: .
+    image: fib-flask-app
+    env_file:
+      - .env
+    command: >
+      sh -c "flask db upgrade &&
+             flask run --host=0.0.0.0 --port=8000"
+    volumes:
+      - ./app:/app
+    ports:
+      - "8800:8800"
+    depends_on:
+      db:
+      redis:
+
+  celery:
+    build:
+      context: .
+    image: fib-celery
+    env_file:
+      - .env
+    command: celery -A app.celery.make_celery worker -E --loglevel=INFO
+    volumes_from:
+      - api
+    depends_on:
+      - redis
+
+volumes:
+  fib-pg-data:
+  fib-redis-data:
