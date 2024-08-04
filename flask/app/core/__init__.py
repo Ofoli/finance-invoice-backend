@@ -7,6 +7,8 @@ from flask import Flask
 from ..config import app_config
 from ..config.extensions import init_extensions
 
+from .constants import LOGS_DIR, APP_LOGGER
+
 load_dotenv()
 
 
@@ -32,10 +34,7 @@ def create_app(config_name: str) -> Flask:
 
     init_extensions(app)
 
-    LOGS_DIR: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
-
-    _create_logger("task", file_path=os.path.join(LOGS_DIR, "task.log"))
-    _create_logger(name="syslog", file_path=os.path.join(LOGS_DIR, "syslog.log"))
+    _create_logger(APP_LOGGER, file_path=os.path.join(LOGS_DIR, "syslog.log"))
 
     return app
 
