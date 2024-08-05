@@ -19,7 +19,7 @@ services:
       - .env
     command: >
       sh -c "flask db upgrade &&
-             flask run --host=0.0.0.0 --port=8800"
+            flask run --host=0.0.0.0 --port=8800 --reload"
     volumes:
       - ./app:/app
     ports:

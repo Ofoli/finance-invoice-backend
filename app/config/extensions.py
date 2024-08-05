@@ -4,9 +4,11 @@ from redis import Redis
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_marshmallow import Marshmallow
 
 
 db = SQLAlchemy()
+ma = Marshmallow()
 migrate = Migrate()
 flask_bcrypt = Bcrypt()
 
@@ -19,6 +21,7 @@ def _init_redis(app: Flask) -> None:
 
 def init_extensions(app: Flask) -> None:
     db.init_app(app)
+    ma.init_app(app)
     migrate.init_app(app, db)
     flask_bcrypt.init_app(app)
     _init_redis(app)

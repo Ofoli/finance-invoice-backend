@@ -3,10 +3,12 @@ import datetime
 from sqlalchemy import Boolean, Column, DateTime, Float, String, Integer
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
-from ...config.extensions import flask_bcrypt
+from ...config.extensions import db, flask_bcrypt
 
 
-class TimestampsMixin(object):
+class Base(db.Model):
+    __abstract__ = True
+
     @declared_attr
     def created_at(cls):
         return Column(
@@ -22,10 +24,6 @@ class TimestampsMixin(object):
             nullable=False,
         )
 
-
-Base = declarative_base(cls=TimestampsMixin)
-
-
 class AuthUser(Base):
     __tablename__ = "auth_user"
 
@@ -34,7 +32,6 @@ class AuthUser(Base):
     password = Column(String(100))
     fullname = Column(String(255), nullable=False)
 
-    @password.setter
     def set_password(self, password):
         self.password = flask_bcrypt.generate_password_hash(password).decode("utf-8")
 

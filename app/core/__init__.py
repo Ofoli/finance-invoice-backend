@@ -28,6 +28,12 @@ def _create_logger(name: str, file_path: str) -> None:
         logger.propagate = False
 
 
+def _register_blueprints(app: Flask):
+    from .users import users_bp
+
+    app.register_blueprint(users_bp, url_prefix="/api")
+
+
 def create_app(config_name: str) -> Flask:
     app = Flask(__name__)
     app.config.from_object(app_config[config_name])
@@ -35,6 +41,8 @@ def create_app(config_name: str) -> Flask:
     init_extensions(app)
 
     _create_logger(APP_LOGGER, file_path=os.path.join(LOGS_DIR, "syslog.log"))
+
+    _register_blueprints(app)
 
     return app
 
