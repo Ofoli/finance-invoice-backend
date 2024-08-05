@@ -9,10 +9,10 @@ TResponse = Tuple[Dict[str, TypeVar("T") | TypeVar("V")], int]
 
 class Response:
     def __init__(self, status: int = HTTPStatus.OK) -> None:
-        self.status = status
+        self._status = status
 
     def success(self, data: ResponseData) -> TResponse[Literal[True], ResponseData]:
-        return dict(status=True, data=data), self.status
+        return dict(status=True, data=data), self._status
 
     def failed(self, error: ErrorData = "") -> TResponse[Literal[False], ErrorData]:
-        return dict(status=False, message=error), self.status
+        return dict(status=False, message=error), self._status
