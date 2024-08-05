@@ -12,7 +12,9 @@ flask_bcrypt = Bcrypt()
 
 
 def _init_redis(app: Flask) -> None:
-    app.extensions["redis"] = Redis(host=app.config["REDIS_HOST"], db=1, decode_responses=True)
+    app.extensions["redis"] = Redis(
+        host=app.config["REDIS_HOST"], db=1, decode_responses=True
+    )
 
 
 def init_extensions(app: Flask) -> None:
