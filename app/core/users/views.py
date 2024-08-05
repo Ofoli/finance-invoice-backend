@@ -1,10 +1,12 @@
-from flask import jsonify, request
+from http import HTTPStatus
+from flask import request
 from flask_restful import Resource
 from marshmallow import ValidationError
 
 from ..models.user import AuthUser
-
 from ..schemas.user import AuthUserSchema
+
+from ..utils.response import Response
 
 
 class AuthUsersView(Resource):
@@ -12,13 +14,14 @@ class AuthUsersView(Resource):
 
     def get(self):
         users = AuthUser.query.all()
-        return self.schema(many=True).dump(users)
+        return Response().success(self.schema(many=True).dump(users))
 
     def post(self):
-        data = request.get_json()
-
         try:
-            validated_data = self.schema().load(data)
-            return jsonify(validated_data)
+            validated_data = self.schema().load(request.get_json())
+            new_user = AuthUser(**validated_data)
+            new_user.set_password(validated_data.get("password"))
+            new_user.save()
+            return Response().success(self.schema().dump(new_user))
         except ValidationError as err:
-            return jsonify(err.messages), 400
+            return Response(HTTPStatus.BAD_REQUEST).failed(err.messages)

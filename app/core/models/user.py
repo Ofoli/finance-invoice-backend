@@ -1,7 +1,7 @@
 import datetime
 
 from sqlalchemy import Boolean, Column, DateTime, Float, String, Integer
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy.ext.declarative import declared_attr
 
 from ...config.extensions import db, flask_bcrypt
 
@@ -24,6 +24,11 @@ class Base(db.Model):
             nullable=False,
         )
 
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+
+
 class AuthUser(Base):
     __tablename__ = "auth_user"
 
@@ -33,7 +38,8 @@ class AuthUser(Base):
     fullname = Column(String(255), nullable=False)
 
     def set_password(self, password):
-        self.password = flask_bcrypt.generate_password_hash(password).decode("utf-8")
+        self.password = flask_bcrypt.generate_password_hash(
+            password).decode("utf-8")
 
     def check_password(self, password):
         return flask_bcrypt.check_password_hash(self.password, password)
