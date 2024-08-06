@@ -1,9 +1,11 @@
 import datetime
+import jwt
 
 from sqlalchemy import Boolean, Column, DateTime, Float, String, Integer
 from sqlalchemy.ext.declarative import declared_attr
 
 from ...config.extensions import db, flask_bcrypt
+from ..constants import JWT_SECRET
 
 
 class Base(db.Model):
@@ -43,6 +45,27 @@ class AuthUser(Base):
 
     def check_password(self, password):
         return flask_bcrypt.check_password_hash(self.password, password)
+
+    def generate_auth_token(self):
+        try:
+            payload = {
+                'user': self.id,
+                'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1, seconds=5),
+                'iat': datetime.datetime.now(datetime.UTC),
+            }
+            return jwt.encode(payload, JWT_SECRET, algorithm='HS256')
+        except Exception as e:
+            raise Exception(f"Token generation failed: {e}")
+
+    @staticmethod
+    def decode_auth_token(auth_token):
+        try:
+            payload = jwt.decode(auth_token, JWT_SECRET)
+            return payload['user']
+        except jwt.ExpiredSignatureError:
+            return 'Signature expired. Please log in again.'
+        except jwt.InvalidTokenError:
+            return 'Invalid token. Please log in again.'
 
     def __repr__(self):
         return "<User '{}'>".format(self.email)

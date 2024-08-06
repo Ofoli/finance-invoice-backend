@@ -36,3 +36,8 @@ class BlastClientSchema(ma.SQLAlchemyAutoSchema):
 class EsmeClientSchema(ma.SQLAlchemyAutoSchema):
     class Meta:  # type: ignore
         model = ESMEClient
+
+
+class LoginSchema(ma.Schema):
+    email = fields.String(required=True)
+    password = fields.String(required=True)
