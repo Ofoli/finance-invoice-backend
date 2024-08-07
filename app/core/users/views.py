@@ -3,9 +3,9 @@ from flask import request
 from flask_restful import Resource
 from marshmallow import ValidationError
 
+from ..utils.response import Response
 from ..schemas.user import AuthUserSchema
 
-from ..utils.response import Response
 from .queries import get_all_users, get_user, get_user_by_email, create_user
 
 

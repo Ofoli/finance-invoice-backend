@@ -5,3 +5,4 @@ LOGS_DIR = os.path.join(BASE_APP_DIR, "..", "logs")
 
 
 APP_LOGGER = "syslog"
+JWT_SECRET = os.environ.get("JWT_SECRET", "")
