@@ -42,3 +42,9 @@ class EsmeClientSchema(ma.SQLAlchemyAutoSchema):
 class LoginSchema(ma.Schema):
     email = fields.String(required=True)
     password = fields.String(required=True)
+
+
+class ResetPasswordSchema(ma.Schema):
+    password = fields.String(required=True)
+    new_password = fields.String(
+        required=True, validate=validate.Length(min=12))

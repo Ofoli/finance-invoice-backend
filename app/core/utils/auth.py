@@ -6,7 +6,7 @@ from ..models.user import AuthUser
 
 
 class IsAuthedUserMixin(MethodView):
-    user = None
+    user: int
 
     def dispatch_request(self, *args, **kwargs):
         auth = request.headers.get("Authorization")
