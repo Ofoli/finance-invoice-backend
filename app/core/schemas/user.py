@@ -21,6 +21,7 @@ class AuthUserSchema(ma.SQLAlchemyAutoSchema):
 
     class Meta:  # type: ignore
         model = AuthUser
+        exclude = ["created_at", "updated_at"]
 
 
 class ApiClientSchema(ma.SQLAlchemyAutoSchema):
