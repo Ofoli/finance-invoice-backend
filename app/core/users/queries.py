@@ -1,4 +1,5 @@
 from typing import Optional, Dict, List
+from ...config.extensions import db
 from ..models.user import AuthUser
 
 
@@ -19,3 +20,8 @@ def create_user(data: Dict) -> AuthUser:
     new_user.set_password(data.get("password"))
     new_user.save()
     return new_user
+
+
+def delete_user(user: AuthUser):
+    db.session.delete(user)
+    db.session.commit()

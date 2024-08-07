@@ -1,7 +1,7 @@
 import logging
 from http import HTTPStatus
 
-from app.core.constants import APP_LOGGER
+from ...core.constants import APP_LOGGER
 from ..users.queries import get_user_by_email
 from ..utils.response import Response
 
