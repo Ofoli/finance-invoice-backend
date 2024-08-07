@@ -1,7 +1,8 @@
 from http import HTTPStatus
 from flask import request
-from flask_restful import Resource
 from marshmallow import ValidationError
+
+from app.core.models.user import AuthUser
 
 from ..utils.response import Response
 from ..utils.auth import IsAuthedUserMixin
@@ -37,7 +38,15 @@ class AuthUserView(IsAuthedUserMixin):
 
     def get(self, id):
         user = get_user(id)
-        if user is None:
-            error = "User not found"
-            return Response(HTTPStatus.NOT_FOUND).failed(error)
+        return Response().success(self.schema().dump(user))
+
+    def patch(self, id):
+        user: AuthUser = get_user(id)
+        fullname = request.get_json().get("fullname")
+        if not fullname:
+            error = "fullname is required"
+            return Response(HTTPStatus.BAD_REQUEST).failed(error)
+
+        user.fullname = fullname
+        user.save()
         return Response().success(self.schema().dump(user))
