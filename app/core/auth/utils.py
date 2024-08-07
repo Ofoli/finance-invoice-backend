@@ -1,8 +1,10 @@
 import logging
 from http import HTTPStatus
 
+from app.core.models.user import AuthUser
+
 from ...core.constants import APP_LOGGER
-from ..users.queries import get_user_by_email
+from ..users.queries import get_user, get_user_by_email
 from ..utils.response import Response
 
 logger = logging.getLogger(APP_LOGGER)
@@ -30,3 +32,12 @@ class Auth:
         except Exception as e:
             logger.error("Login failed for {}, Error: {}".format(email, e))
             return Response(HTTPStatus.INTERNAL_SERVER_ERROR).failed("Try Again")
+
+    @staticmethod
+    def reset_password(user: int, password: str, new_password: str):
+        current_user = get_user(user)
+        if current_user.check_password(password):
+            current_user.set_password(new_password)
+            current_user.save()
+            return Response().success(dict(message="Success"))
+        return Response(HTTPStatus.PRECONDITION_FAILED).failed("Password do not match")
