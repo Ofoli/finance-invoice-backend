@@ -50,7 +50,7 @@ class AuthUser(Base):
         try:
             payload = {
                 'user': self.id,
-                'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1, seconds=5),
+                'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(hours=5),
                 'iat': datetime.datetime.now(datetime.UTC),
             }
             return jwt.encode(payload, JWT_SECRET, algorithm='HS256')
@@ -60,7 +60,7 @@ class AuthUser(Base):
     @staticmethod
     def decode_auth_token(auth_token):
         try:
-            payload = jwt.decode(auth_token, JWT_SECRET)
+            payload = jwt.decode(auth_token, JWT_SECRET, algorithms=['HS256'])
             return payload['user']
         except jwt.ExpiredSignatureError:
             return 'Signature expired. Please log in again.'

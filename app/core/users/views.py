@@ -4,12 +4,13 @@ from flask_restful import Resource
 from marshmallow import ValidationError
 
 from ..utils.response import Response
+from ..utils.auth import IsAuthedUserMixin
 from ..schemas.user import AuthUserSchema
 
 from .queries import get_all_users, get_user, get_user_by_email, create_user
 
 
-class AuthUsersView(Resource):
+class AuthUsersView(IsAuthedUserMixin):
     schema = AuthUserSchema
 
     def get(self):
@@ -31,7 +32,7 @@ class AuthUsersView(Resource):
             return Response(HTTPStatus.BAD_REQUEST).failed(err.messages)
 
 
-class AuthUserView(Resource):
+class AuthUserView(IsAuthedUserMixin):
     schema = AuthUserSchema
 
     def get(self, id):
