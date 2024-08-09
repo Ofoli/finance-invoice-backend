@@ -1,23 +1,38 @@
+from typing import List, Dict, Union
+
+from ...config.extensions import db
+
 from ..models.user import ApiClient, BlastClient, ESMEClient
 from ..utils.enums import ClientType
 
+ModelClient = Union[ApiClient, BlastClient, ESMEClient]
+
 
 class Client:
-
-    @staticmethod
-    def get_model(client_type: str):
-        return {
+    def __init__(self, client_type: str = "") -> None:
+        self._Model = {
             ClientType.API.value: ApiClient,
             ClientType.BLAST.value: BlastClient,
         }.get(client_type, ESMEClient)
 
     @staticmethod
-    def get_all():
+    def get_all() -> List[ModelClient]:
         return ApiClient.query.all() + BlastClient.query.all() + ESMEClient.query.all()
 
-    @staticmethod
-    def create(data, client_type: str):
-        Model = Client.get_model(client_type)
-        client = Model(**data)
+    def create(self, data: Dict) -> ModelClient:
+        client = self._Model(**data)
         client.save()
         return client
+
+    def get_client(self, id: int) -> ModelClient:
+        return self._Model.query.get_or_404(ident=id, description="Client not found")
+
+    def delete_client(self, id: int) -> None:
+        client = self.get_client(id)
+        db.session.delete(client)
+        db.session.commit()
+
+    def update_client(self, id: int, data: Dict) -> ModelClient:
+        db.session.query(self._Model).filter_by(id=id).update(data)
+        db.session.commit()
+        return self.get_client(id)
