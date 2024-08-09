@@ -15,7 +15,7 @@ class Auth:
     @staticmethod
     def login_user(email: str, password: str):
         try:
-            user = get_user_by_email(email=email)
+            user: AuthUser | None = get_user_by_email(email=email)
             if user is not None and user.check_password(password):
                 auth_token = user.generate_auth_token()
                 response = dict(
@@ -35,9 +35,9 @@ class Auth:
 
     @staticmethod
     def reset_password(user: int, password: str, new_password: str):
-        current_user = get_user(user)
+        current_user: AuthUser = get_user(user)
         if current_user.check_password(password):
             current_user.set_password(new_password)
             current_user.save()
-            return Response().success(dict(message="Success"))
+            return Response().success(dict())
         return Response(HTTPStatus.PRECONDITION_FAILED).failed("Password do not match")

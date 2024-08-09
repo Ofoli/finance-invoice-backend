@@ -1,6 +1,8 @@
 from marshmallow import fields, validate, ValidationError
+from marshmallow_enum import EnumField
 from ...config.extensions import ma
 
+from ..utils.enums import ClientType
 
 from ..models.user import AuthUser, ApiClient, BlastClient, ESMEClient
 
@@ -22,6 +24,10 @@ class AuthUserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:  # type: ignore
         model = AuthUser
         exclude = ["created_at", "updated_at"]
+
+
+class ClientTypeSchema(ma.SQLAlchemyAutoSchema):
+    client_type: EnumField(ClientType, by_value=True)  # type: ignore
 
 
 class ApiClientSchema(ma.SQLAlchemyAutoSchema):
