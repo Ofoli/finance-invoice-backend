@@ -4,11 +4,13 @@ import jwt
 from sqlalchemy import Boolean, Column, DateTime, Float, String, Integer
 from sqlalchemy.ext.declarative import declared_attr
 
-from ...config.extensions import db, flask_bcrypt
+from ...config.extensions import flask_bcrypt
 from ..constants import JWT_SECRET
 
+from . import BaseModel
 
-class Base(db.Model):
+
+class Base(BaseModel):
     __abstract__ = True
 
     @declared_attr
@@ -26,15 +28,10 @@ class Base(db.Model):
             nullable=False,
         )
 
-    def save(self):
-        db.session.add(self)
-        db.session.commit()
-
 
 class AuthUser(Base):
     __tablename__ = "auth_user"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String(255), nullable=False, unique=True)
     password = Column(String(100))
     fullname = Column(String(255), nullable=False)
@@ -74,7 +71,6 @@ class AuthUser(Base):
 class BasePostpaidClient(Base):
     __abstract__ = True
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(255), nullable=False, unique=True)
     rate = Column(Float, nullable=False)
 

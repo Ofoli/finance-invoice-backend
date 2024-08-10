@@ -33,10 +33,12 @@ def _register_blueprints(app: Flask):
     from .users import users_bp
     from .auth import auth_bp
     from .clients import client_bp
+    from .report import report_bp
 
     app.register_blueprint(users_bp, url_prefix="/api/users")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(client_bp, url_prefix="/api/clients")
+    app.register_blueprint(report_bp, url_prefix="/api/report")
 
 
 def create_app(config_name: str) -> Flask:
