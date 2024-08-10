@@ -32,9 +32,11 @@ def _create_logger(name: str, file_path: str) -> None:
 def _register_blueprints(app: Flask):
     from .users import users_bp
     from .auth import auth_bp
+    from .clients import client_bp
 
     app.register_blueprint(users_bp, url_prefix="/api/users")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
+    app.register_blueprint(client_bp, url_prefix="/api/clients")
 
 
 def create_app(config_name: str) -> Flask:

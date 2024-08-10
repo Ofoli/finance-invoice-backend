@@ -1,6 +1,8 @@
 from marshmallow import fields, validate, ValidationError
+from marshmallow_enum import EnumField
 from ...config.extensions import ma
 
+from ..utils.enums import ClientType
 
 from ..models.user import AuthUser, ApiClient, BlastClient, ESMEClient
 
@@ -8,6 +10,11 @@ from ..models.user import AuthUser, ApiClient, BlastClient, ESMEClient
 def should_be_nalo_email(email: str):
     if not email.endswith("@nalosolutions.com"):
         raise ValidationError("Should be a NALO email")
+
+
+def validate_client_type(client_type: str):
+    if not client_type in [ctype.value for ctype in ClientType]:
+        raise ValidationError("Invalid client_type")
 
 
 class AuthUserSchema(ma.SQLAlchemyAutoSchema):
@@ -22,6 +29,10 @@ class AuthUserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:  # type: ignore
         model = AuthUser
         exclude = ["created_at", "updated_at"]
+
+
+class ClientTypeSchema(ma.SQLAlchemyAutoSchema):
+    client_type = fields.String(required=True, validate=validate_client_type)
 
 
 class ApiClientSchema(ma.SQLAlchemyAutoSchema):
