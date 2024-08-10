@@ -20,16 +20,33 @@ class BaseClientView(IsAuthedUserMixin):
         }
         return schemas.get(client_type, EsmeClientSchema)
 
+    def _check_type(self, client_type: str):
+        try:
+            ClientTypeSchema().load(dict(client_type=client_type))
+        except ValidationError as err:
+            abort(HTTPStatus.BAD_REQUEST, "Invalid client_type in url")
 
-class ClientsView(BaseClientView):
+
+class GetAllClientsView(BaseClientView):
+    def _format_data(self, key, data):
+        schema = self._get_schema(key)
+        return schema(many=True).dump(data)  # type: ignore
+
     def get(self):
-        clients: List[Any] = Client.get_all()
+        clients: List[Any] = [
+            {**client, "type": key}
+            for key, data in Client.get_all().items()
+            for client in self._format_data(key, data)
+        ]
         return Response().success(clients)
 
-    def post(self):
+
+class CreateClientView(BaseClientView):
+    def post(self, client_type: str):
+        data = request.get_json()
+        self._check_type(client_type)
+
         try:
-            data = request.get_json()
-            client_type = ClientTypeSchema().load(data)
             schema = self._get_schema(client_type)
             validated_data = schema().load(data)  # type: ignore
             client = schema().dump(Client(client_type).create(validated_data))  # type: ignore

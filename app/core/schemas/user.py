@@ -12,6 +12,11 @@ def should_be_nalo_email(email: str):
         raise ValidationError("Should be a NALO email")
 
 
+def validate_client_type(client_type: str):
+    if not client_type in [ctype.value for ctype in ClientType]:
+        raise ValidationError("Invalid client_type")
+
+
 class AuthUserSchema(ma.SQLAlchemyAutoSchema):
 
     email = fields.Email(required=True, validate=should_be_nalo_email)
@@ -27,7 +32,7 @@ class AuthUserSchema(ma.SQLAlchemyAutoSchema):
 
 
 class ClientTypeSchema(ma.SQLAlchemyAutoSchema):
-    client_type: EnumField(ClientType, by_value=True)  # type: ignore
+    client_type = fields.String(required=True, validate=validate_client_type)
 
 
 class ApiClientSchema(ma.SQLAlchemyAutoSchema):

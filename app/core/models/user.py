@@ -82,7 +82,7 @@ class BasePostpaidClient(Base):
 class ApiClient(BasePostpaidClient):
     __tablename__ = "api_client"
 
-    aid = Column(Integer, nullable=False)
+    aid = Column(String, nullable=False)
 
 
 class BlastClient(BasePostpaidClient):
