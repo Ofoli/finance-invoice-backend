@@ -6,7 +6,7 @@ from flask_restful import Resource
 from marshmallow import ValidationError
 
 from ..schemas.user import LoginSchema, ResetPasswordSchema
-from ..utils.response import Response
+from ..utils.http import Response
 from ..utils.auth import IsAuthedUserMixin
 
 from .utils import Auth

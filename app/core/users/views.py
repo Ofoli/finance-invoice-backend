@@ -3,7 +3,7 @@ from typing import List
 from flask import request
 from marshmallow import ValidationError
 
-from ..utils.response import Response
+from ..utils.http import Response
 from ..utils.auth import IsAuthedUserMixin
 from ..schemas.user import AuthUserSchema
 from ..models.user import AuthUser

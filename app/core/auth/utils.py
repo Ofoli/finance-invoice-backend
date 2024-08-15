@@ -5,7 +5,7 @@ from app.core.models.user import AuthUser
 
 from ...core.constants import APP_LOGGER
 from ..users.queries import get_user, get_user_by_email
-from ..utils.response import Response
+from ..utils.http import Response
 
 logger = logging.getLogger(APP_LOGGER)
 
