@@ -79,6 +79,7 @@ class ApiClient(BasePostpaidClient):
     __tablename__ = "api_client"
 
     aid = Column(String, nullable=False)
+    reseller_prefix = Column(String)
 
 
 class BlastClient(BasePostpaidClient):
