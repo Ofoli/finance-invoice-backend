@@ -1,5 +1,7 @@
 FROM python:3.11-alpine
 
+ENV TZ UTC
+
 COPY ./requirements.txt ./requirements.txt
 COPY ./app ./app
 

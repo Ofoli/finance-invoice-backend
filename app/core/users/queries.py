@@ -1,7 +1,7 @@
 from typing import Optional, Dict, List
 
-from ...config.extensions import db
-from ..models.user import AuthUser
+from ..models import db
+from app.core.models.user import AuthUser
 
 
 def get_all_users() -> List[AuthUser]:

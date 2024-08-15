@@ -1,9 +1,9 @@
 from typing import List, Dict, Union
 
-from ...config.extensions import db
+from ..models import db
 
-from ..models.user import ApiClient, BlastClient, ESMEClient
-from ..utils.enums import ClientType
+from app.core.models.user import ApiClient, BlastClient, ESMEClient
+from app.core.utils.enums import ClientType
 
 ModelClient = Union[ApiClient, BlastClient, ESMEClient]
 
