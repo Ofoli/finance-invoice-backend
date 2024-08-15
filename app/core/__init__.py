@@ -4,8 +4,8 @@ import logging
 from dotenv import load_dotenv
 from flask import Flask
 
-from ..config import app_config
-from ..config.extensions import init_extensions
+from app.config import app_config
+from app.config.extensions import init_extensions
 
 from .constants import LOGS_DIR, APP_LOGGER
 
@@ -55,3 +55,4 @@ def create_app(config_name: str) -> Flask:
 
 
 app = create_app(os.environ["FLASK_ENV"])
+celery_app = app.extensions["celery"]

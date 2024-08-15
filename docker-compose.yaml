@@ -28,6 +28,32 @@ services:
       - db
       - redis
 
+  celery:
+    build:
+      context: .
+    image: fib-celery
+    env_file:
+      - .env
+    command: celery -A app.core.celery_app worker -E --loglevel=INFO
+    volumes_from:
+      - api
+    working_dir: /
+    depends_on:
+      - redis
+
+  celery-beat:
+    build:
+      context: .
+    image: fib-celery-beat
+    env_file:
+      - .env
+    command: celery -A app.core.celery_app beat --loglevel=INFO
+    volumes_from:
+      - api
+    working_dir: /
+    depends_on:
+      - redis
+
 volumes:
   fib-pg-data:
   fib-redis-data:

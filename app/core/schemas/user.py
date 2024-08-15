@@ -1,6 +1,5 @@
 from marshmallow import fields, validate, ValidationError
-from marshmallow_enum import EnumField
-from ...config.extensions import ma
+from app.config.extensions import ma
 
 from ..utils.enums import ClientType
 

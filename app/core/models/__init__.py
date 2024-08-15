@@ -1,6 +1,5 @@
 from sqlalchemy import Column, Integer
-
-from ...config.extensions import db
+from app.config.extensions import db
 
 
 class BaseModel(db.Model):

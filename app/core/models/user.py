@@ -4,8 +4,8 @@ import jwt
 from sqlalchemy import Boolean, Column, DateTime, Float, String, Integer
 from sqlalchemy.ext.declarative import declared_attr
 
-from ...config.extensions import flask_bcrypt
-from ..constants import JWT_SECRET
+from app.core.constants import JWT_SECRET
+from app.config.extensions import flask_bcrypt
 
 from . import BaseModel
 
