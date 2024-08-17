@@ -28,9 +28,9 @@ NETWORKS = {
     "AIRTELTIGO": "23327|23357|23326|23356",
     "MTN": "23324|23325|23359|23355|23354|23353"
 }
-ALERTS_SPACE_ROW = {
-    "network": "",
+ESME_SPACE_ROW = {
     "account": "",
+    "network": "",
     "count": "",
-    "page_count": ""
 }
+ALERTS_SPACE_ROW = {**ESME_SPACE_ROW, "page_count": ""}

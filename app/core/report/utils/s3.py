@@ -57,10 +57,10 @@ def _fetch_report(url: str) -> list:
     return []
 
 
-def fetch_s3_user_report(username: str) -> dict:
+def fetch_s3_user_report(username: str) -> list:
     logger.info(f"fetching report for user: {username}")
     url = f"{GET_USER_REPORT_URL}?username={username}"
-    return _fetch_report(url).pop() or {}
+    return report[0]["data"] if len(report := _fetch_report(url)) else []
 
 
 def fetch_s9_user_report(aid: str) -> list:
