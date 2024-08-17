@@ -1,4 +1,4 @@
-from typing import List, Dict, Union
+from typing import List, Dict, Union, Optional
 
 from ..models import db
 
@@ -30,6 +30,9 @@ class Client:
 
     def get_client(self, id: int) -> ModelClient:
         return self._Model.query.get_or_404(ident=id, description="Client not found")
+
+    def get_client_by_username(self, username: str) -> Optional[ModelClient]:
+        return self._Model.query.filter_by(username=username).first()
 
     def delete_client(self, id: int) -> None:
         client = self.get_client(id)

@@ -7,16 +7,12 @@ result_serializer = "json"
 worker_max_tasks_per_child = 20
 
 beat_schedule = {
-    "test-celery": {
-        "task": "app.core.report.tasks.test_celery",
-        "schedule": crontab(minute="*"),
-    },
     "initiate-s3-report-script": {
         "task": "app.core.report.tasks.initiate_s3_fetch_script",
-        "schedule": crontab(minute="*/2")
+        "schedule": crontab(minute="2")
     },
     "initiate-etz-report-script": {
         "task": "app.core.report.tasks.initiate_etz_report_script",
-        "schedule": crontab(minute="*/2")
+        "schedule": crontab(minute="2")
     }
 }
