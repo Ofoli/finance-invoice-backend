@@ -1,14 +1,10 @@
+from ...utils.enums import BlastClientLevel
+
 from ..constants import NETWORKS, ALERTS_SPACE_ROW, ESME_SPACE_ROW
 
 from .s3 import fetch_reseller_users, fetch_s3_user_report, fetch_s9_user_report
+from .s7 import fetch_blast_report, extract_blast_params, decrypt_message
 from .misc import is_s3_client, get_previous_month
-
-from ...constants import APP_LOGGER
-
-import logging
-import json
-
-logger = logging.getLogger(APP_LOGGER)
 
 
 def _get_network(network: str) -> str:
@@ -34,8 +30,6 @@ def _format_esme_report(esme: str, report: list[dict]) -> list[dict]:
     if len(report) == 0:
         return []
 
-    logger.info(json.dumps(report))
-
     for record in report:
         if record["date"] != report_month:
             continue
@@ -54,7 +48,7 @@ def _format_esme_report(esme: str, report: list[dict]) -> list[dict]:
     return list(formatted_report.values()) + [ESME_SPACE_ROW, ESME_SPACE_ROW]
 
 
-def _format_report(username: str, report: list[dict]) -> list[dict]:
+def _format_api_report(username: str, report: list[dict]) -> list[dict]:
     formatted_report: dict[str, dict] = {}
 
     if len(report) == 0:
@@ -78,6 +72,20 @@ def _format_report(username: str, report: list[dict]) -> list[dict]:
     return list(formatted_report.values()) + [ALERTS_SPACE_ROW, ALERTS_SPACE_ROW]
 
 
+def _format_blast_report(report: list[dict]) -> list[dict]:
+    return [
+        {"jobid": record["jobid"],
+         "sent_date": record["sent_date"],
+         "username": record["username"],
+         "sender": record["sender"],
+         "total_sms": (total_pages := int(record["total_sms"]))/int(record["pages_count"]),
+         "total_pages": total_pages,
+         "message": decrypt_message(record["message"], record["ekey"])
+         }
+        for record in report
+    ]
+
+
 def fetch_alerts(api_clients: list) -> list[dict]:
     reseller_users: list[str] = fetch_reseller_users()
     s9_users: list[dict] = []
@@ -92,20 +100,26 @@ def fetch_alerts(api_clients: list) -> list[dict]:
 
     for username in sorted(reseller_users + s3_users, key=lambda x: x):
         report: list = fetch_s3_user_report(username)
-        alerts += _format_report(username, report)
+        alerts += _format_api_report(username, report)
 
     for user in sorted(s9_users, key=lambda x: x["username"]):
         report: list = fetch_s9_user_report(user["aid"])
-        alerts += _format_report(user["username"], report)
+        alerts += _format_api_report(user["username"], report)
 
     return alerts
 
 
 def fetch_esme_counts(esme_clients: list) -> list[dict]:
-    esme_counts: list[dict] = []
+    return [
+        report
+        for client in esme_clients
+        for report in _format_esme_report(client.username, fetch_s3_user_report(client.username))
+    ]
 
-    for client in esme_clients:
-        report: list = fetch_s3_user_report(client.username)
-        esme_counts += _format_esme_report(client.username, report)
 
-    return esme_counts
+def fetch_blasts(blast_clients: list) -> list[dict]:
+    return [
+        {"account": client.username, "report": _format_blast_report(report)}
+        for client in blast_clients
+        if (report := fetch_blast_report(*extract_blast_params(client)))
+    ]

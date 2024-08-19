@@ -10,11 +10,10 @@ from ..constants import (
     GET_S9_USER_REPORT,
     GET_RESELLER_USERS_URL,
     S3_CLIENT_AID,
-    DEFAULT_RATE,
-    GET_USER_RATE_URL
 )
 
 from .misc import get_previous_month, get_report_period
+from .s7 import fetch_user_rate
 
 
 logger = logging.getLogger(APP_LOGGER)
@@ -75,13 +74,6 @@ def fetch_reseller_users() -> list[str]:
     return [_create_api_user(user[5:-1]) for user in _fetch_report(GET_RESELLER_USERS_URL) if bool(user)]
 
 
-def _fetch_s3_user_rate(username: str) -> float:
-    status, data = Request.get(f"{GET_USER_RATE_URL}/?username={username}")
-    if not status:
-        return DEFAULT_RATE
-    return data.get("local_sms_cost", DEFAULT_RATE)  # type: ignore
-
-
 def _create_api_user(username: str) -> str:
     api_client = Client(ClientType.API.value)
     user = api_client.get_client_by_username(username)
@@ -95,7 +87,7 @@ def _create_api_user(username: str) -> str:
                 username=username,
                 aid=S3_CLIENT_AID,
                 reseller_prefix=prefix,
-                rate=_fetch_s3_user_rate(username)
+                rate=fetch_user_rate(username)
             ))
         except Exception as e:
             logger.error(
