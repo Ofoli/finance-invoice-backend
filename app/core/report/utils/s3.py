@@ -16,7 +16,7 @@ from .misc import get_previous_month, get_report_period
 from .s7 import fetch_user_rate
 
 
-logger = logging.getLogger(APP_LOGGER)
+logger: logging.Logger = logging.getLogger(APP_LOGGER)
 
 
 def get_initiate_fetch_payload() -> dict[str, list[str] | str]:

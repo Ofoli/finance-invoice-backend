@@ -9,10 +9,13 @@ from ...constants import FILES_DIR
 from ..constants import S3_CLIENT_AID
 
 
+def send_report_email(files: list[str]): ...
+
+
 def get_previous_month() -> str:
     current_date = datetime.now()
     previous_month = current_date.replace(day=1) - timedelta(days=1)
-    return previous_month.strftime('%Y-%m')
+    return previous_month.strftime("%Y-%m")
 
 
 def create_csv_report(data: list, filename: str) -> str:
@@ -41,7 +44,7 @@ def zip_blast_reports(src_files: list[str], dst_file: str) -> str:
     if not os.path.exists(FILES_DIR):
         os.makedirs(FILES_DIR)
 
-    with zipfile.ZipFile(dst_path, 'w') as zip_file:
+    with zipfile.ZipFile(dst_path, "w") as zip_file:
         for filename in src_files:
             zip_file.write(filename)
 
@@ -57,7 +60,7 @@ def get_report_period() -> tuple[str, str]:
     first_day_of_current_month = today.replace(day=1)
     last_day_of_previous_month = first_day_of_current_month - timedelta(days=1)
     first_day_of_previous_month = last_day_of_previous_month.replace(day=1)
-    return first_day_of_previous_month.strftime('%Y-%m-%d'), last_day_of_previous_month.strftime('%Y-%m-%d')
+    return first_day_of_previous_month.strftime("%Y-%m-%d"), last_day_of_previous_month.strftime("%Y-%m-%d")
 
 
 def get_blast_period() -> tuple[str, str]:

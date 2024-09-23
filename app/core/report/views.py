@@ -10,5 +10,5 @@ from .tasks import handle_s3_report_callback
 
 class S3ReportCallbackView(Resource):
     def get(self):
-        res = handle_s3_report_callback.delay()  # type: ignore
+        res: Any = handle_s3_report_callback.delay()  # type: ignore
         return res.id

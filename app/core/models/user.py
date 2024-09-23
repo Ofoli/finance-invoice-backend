@@ -1,11 +1,12 @@
 import datetime
 import jwt
 
-from sqlalchemy import Boolean, Column, DateTime, Float, String, Integer
+from sqlalchemy import Boolean, Column, DateTime, Float, String, Integer, Enum
 from sqlalchemy.ext.declarative import declared_attr
 
 from app.core.constants import JWT_SECRET
 from app.config.extensions import flask_bcrypt
+from app.core.utils.enums import Service
 
 from . import BaseModel
 
@@ -15,9 +16,7 @@ class Base(BaseModel):
 
     @declared_attr
     def created_at(cls):
-        return Column(
-            DateTime, default=datetime.datetime.now(datetime.UTC), nullable=False
-        )
+        return Column(DateTime, default=datetime.datetime.now(datetime.UTC), nullable=False)
 
     @declared_attr
     def updated_at(cls):
@@ -37,8 +36,7 @@ class AuthUser(Base):
     fullname = Column(String(255), nullable=False)
 
     def set_password(self, password):
-        self.password = flask_bcrypt.generate_password_hash(
-            password).decode("utf-8")
+        self.password = flask_bcrypt.generate_password_hash(password).decode("utf-8")
 
     def check_password(self, password):
         return flask_bcrypt.check_password_hash(self.password, password)
@@ -46,23 +44,23 @@ class AuthUser(Base):
     def generate_auth_token(self):
         try:
             payload = {
-                'user': self.id,
-                'exp': datetime.datetime.now(datetime.UTC) + datetime.timedelta(hours=5),
-                'iat': datetime.datetime.now(datetime.UTC),
+                "user": self.id,
+                "exp": datetime.datetime.now(datetime.UTC) + datetime.timedelta(hours=5),
+                "iat": datetime.datetime.now(datetime.UTC),
             }
-            return jwt.encode(payload, JWT_SECRET, algorithm='HS256')
+            return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
         except Exception as e:
             raise Exception(f"Token generation failed: {e}")
 
     @staticmethod
     def decode_auth_token(auth_token):
         try:
-            payload = jwt.decode(auth_token, JWT_SECRET, algorithms=['HS256'])
-            return payload['user']
+            payload = jwt.decode(auth_token, JWT_SECRET, algorithms=["HS256"])
+            return payload["user"]
         except jwt.ExpiredSignatureError:
-            return 'Signature expired. Please log in again.'
+            return "Signature expired. Please log in again."
         except jwt.InvalidTokenError:
-            return 'Invalid token. Please log in again.'
+            return "Invalid token. Please log in again."
 
     def __repr__(self):
         return "<User '{}'>".format(self.email)
@@ -80,6 +78,7 @@ class ApiClient(BasePostpaidClient):
 
     aid = Column(String, nullable=False)
     reseller_prefix = Column(String)
+    service = Column(Enum(Service, values_callable=lambda x: [e.value for e in x]), default=Service.SMS.value)
 
 
 class BlastClient(BasePostpaidClient):
@@ -88,6 +87,7 @@ class BlastClient(BasePostpaidClient):
     user_id = Column(Integer, nullable=False)
     reseller_id = Column(Integer, nullable=False)
     is_reseller = Column(Boolean, default=False)
+    service = Column(Enum(Service, values_callable=lambda x: [e.value for e in x]), default=Service.SMS.value)
 
 
 class ESMEClient(BasePostpaidClient):

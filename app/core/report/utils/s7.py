@@ -3,8 +3,7 @@ from cryptography.fernet import Fernet
 
 
 from ...models.user import BlastClient
-from ...clients.queries import Client, ModelClient
-from ...utils.enums import ClientType, BlastClientLevel
+from ...utils.enums import BlastClientLevel
 from ...constants import APP_LOGGER
 from ...utils.http import Request
 
@@ -16,7 +15,7 @@ from ..constants import (
 
 from .misc import get_blast_period
 
-logger = logging.getLogger(APP_LOGGER)
+logger: logging.Logger = logging.getLogger(APP_LOGGER)
 
 
 def extract_blast_params(client: BlastClient) -> tuple[str, str]:

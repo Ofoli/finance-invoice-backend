@@ -7,7 +7,7 @@ from ..clients.queries import Client, ModelClient
 
 from .constants import INITIATE_FETCH_URL, INITIATE_ETZ_URL
 from .utils.s3 import get_initiate_fetch_payload, handle_s3_script_response
-from .utils.misc import get_previous_month, create_csv_report, zip_blast_reports
+from .utils.misc import get_previous_month, create_csv_report, zip_blast_reports, send_report_email
 from .utils.processors import fetch_alerts, fetch_esme_counts, fetch_blasts
 
 
@@ -29,8 +29,8 @@ def handle_s3_report_callback() -> Literal[True]:
     month: str = get_previous_month()
     clients: Dict[str, List[ModelClient]] = Client.get_all()
 
-    # alerts: List[Dict] = fetch_alerts(clients[ClientType.API.value])
-    # alerts_filename: str = create_csv_report(alerts, f"alerts_{month}.csv")
+    alerts: List[Dict] = fetch_alerts(clients[ClientType.API.value])
+    alerts_filename: str = create_csv_report(alerts, f"alerts_{month}.csv")
 
     esme_counts: List[Dict] = fetch_esme_counts(clients[ClientType.ESME.value])
     esme_filename: str = create_csv_report(esme_counts, f"esmes_{month}.csv")
@@ -43,6 +43,6 @@ def handle_s3_report_callback() -> Literal[True]:
     ]
     blasts_filename = zip_blast_reports(blast_filenames, f"blasts_{month}.zip")
 
-    # send_report_email([alerts_filename, esme_filename, blast_filename])
+    send_report_email([alerts_filename, esme_filename, blasts_filename])
 
     return True
