@@ -12,6 +12,11 @@ from ..constants import S3_CLIENT_AID
 def send_report_email(files: list[str]): ...
 
 
+def extract_reseller_prefix(username: str) -> str:
+    first, second, *_ = username.split("_")
+    return f"{first}_{second}"
+
+
 def get_previous_month() -> str:
     current_date = datetime.now()
     previous_month = current_date.replace(day=1) - timedelta(days=1)

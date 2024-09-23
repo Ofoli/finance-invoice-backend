@@ -10,8 +10,3 @@ class ClientType(Enum):
 class BlastClientLevel(Enum):
     USER = "user"
     RESELLER = "reseller"
-
-
-class Service(Enum):
-    SMS = "sms"
-    EMAIL = "email"

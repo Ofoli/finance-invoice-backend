@@ -7,3 +7,4 @@ FILES_DIR: str = os.path.join(_BASE_APP_DIR, "..", "files")
 
 APP_LOGGER = "syslog"
 JWT_SECRET = os.environ.get("JWT_SECRET", "")
+WHITELISTED_IPS = os.environ.get("WHITELISTED_IPS", "")

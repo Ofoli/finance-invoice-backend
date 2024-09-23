@@ -1,12 +1,11 @@
 import datetime
 import jwt
 
-from sqlalchemy import Boolean, Column, DateTime, Float, String, Integer, Enum
+from sqlalchemy import Boolean, Column, DateTime, Float, String, Integer
 from sqlalchemy.ext.declarative import declared_attr
 
 from app.core.constants import JWT_SECRET
 from app.config.extensions import flask_bcrypt
-from app.core.utils.enums import Service
 
 from . import BaseModel
 
@@ -78,7 +77,7 @@ class ApiClient(BasePostpaidClient):
 
     aid = Column(String, nullable=False)
     reseller_prefix = Column(String)
-    service = Column(Enum(Service, values_callable=lambda x: [e.value for e in x]), default=Service.SMS.value)
+    has_email = Column(Boolean, default=False)
 
 
 class BlastClient(BasePostpaidClient):
@@ -87,7 +86,7 @@ class BlastClient(BasePostpaidClient):
     user_id = Column(Integer, nullable=False)
     reseller_id = Column(Integer, nullable=False)
     is_reseller = Column(Boolean, default=False)
-    service = Column(Enum(Service, values_callable=lambda x: [e.value for e in x]), default=Service.SMS.value)
+    has_email = Column(Boolean, default=False)
 
 
 class ESMEClient(BasePostpaidClient):

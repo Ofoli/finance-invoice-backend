@@ -12,7 +12,7 @@ from ..constants import (
     S3_CLIENT_AID,
 )
 
-from .misc import get_previous_month, get_report_period
+from .misc import get_previous_month, get_report_period, extract_reseller_prefix
 from .s7 import fetch_user_rate
 
 
@@ -27,12 +27,11 @@ def get_initiate_fetch_payload() -> dict[str, list[str] | str]:
         if client_type == ClientType.API.value:
             for client in data:
                 if client.reseller_prefix:  # type: ignore
-                    payload['resellers'].append(
-                        client.reseller_prefix)  # type: ignore
+                    payload["resellers"].append(client.reseller_prefix)  # type: ignore
                 else:
-                    payload['apiusers'].append(client.username)
+                    payload["apiusers"].append(client.username)
         if client_type == ClientType.ESME.value:
-            payload['esmes'] = [client.username for client in data]
+            payload["esmes"] = [client.username for client in data]
 
     return {**payload, "date": get_previous_month()}
 
@@ -81,16 +80,12 @@ def _create_api_user(username: str) -> str:
     if user is None:
         logger.info("Attempting to create api client for {}".format(username))
         try:
-            first, second, *_ = username.split("_")
-            prefix = f"{first}_{second}"
-            user = api_client.create(dict(
-                username=username,
-                aid=S3_CLIENT_AID,
-                reseller_prefix=prefix,
-                rate=fetch_user_rate(username)
-            ))
+            prefix: str = extract_reseller_prefix(username)
+            user = api_client.create(
+                dict(username=username, aid=S3_CLIENT_AID, reseller_prefix=prefix, rate=fetch_user_rate(username))
+            )
+            return username
         except Exception as e:
-            logger.error(
-                "failed to create s3 api user {} with error {}".format(username, e))
+            logger.error("failed to create s3 api user {} with error {}".format(username, e))
             return username
     return str(user.username)

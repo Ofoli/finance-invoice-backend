@@ -1,4 +1,3 @@
-
 import requests
 from typing import List, Dict, Any, Literal, Tuple, TypeVar, Union
 from http import HTTPStatus
@@ -35,7 +34,7 @@ class Request:
             response = req(*args, **kwargs)
             response.raise_for_status()
             return True, response.json()
-        except requests.exceptions.HTTPError as http_err:
+        except requests.exceptions.HTTPError:
             return False, Request.__extract_error(response)  # type: ignore
         except requests.exceptions.RequestException as e:
             return False, str(e)
