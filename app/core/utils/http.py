@@ -3,7 +3,7 @@ from typing import List, Dict, Any, Literal, Tuple, TypeVar, Union
 from http import HTTPStatus
 
 
-ResponseData = Dict[str, Any] | List[Dict[str, Any]]
+ResponseData = Dict[str, Any] | List[Dict[str, Any]] | Literal[True] | str
 ErrorData = str | Dict[str, str] | List[Dict[str, str]] | List[str]
 TResponse = Tuple[Dict[str, TypeVar("T") | TypeVar("V")], int]
 

@@ -1,3 +1,6 @@
+import os
+from app.core.constants import FILES_DIR
+
 # URLS
 _S3_BASE_URL = "http://5.9.79.123/eomreport/invoice/api"
 _s7_BASE_URL = "https://api.nalosolutions.com:8888/lmensah"
@@ -37,3 +40,5 @@ ESME_SPACE_ROW = {
     "count": "",
 }
 ALERTS_SPACE_ROW = {**ESME_SPACE_ROW, "page_count": ""}
+ETZ_SENT_FILES_DIR = os.path.join(FILES_DIR, "etz", "sent_files")
+ETZ_STAT_FILES_DIR = os.path.join(FILES_DIR, "etz", "stat_files")
