@@ -7,7 +7,7 @@ from ..clients.queries import Client, ModelClient
 
 from .constants import INITIATE_FETCH_URL, INITIATE_ETZ_URL
 from .utils.s3 import get_initiate_fetch_payload, handle_s3_script_response
-from .utils.etz import remote_copy_etz_file, generate_dump_report
+from .utils.etz import save_etz_network_report, generate_dump_report
 from .utils.misc import get_previous_month, create_csv_report, zip_blast_reports, send_report_email
 from .utils.processors import fetch_alerts, fetch_esme_counts, fetch_blasts, process_email_reports
 
@@ -49,15 +49,10 @@ def handle_s3_report_callback() -> Literal[True]:
 
 
 @celery.shared_task(ignore_result=True)
-def handle_etz_report_callback(callback_data: dict[str, str]) -> Literal[True]:
-    zipped_sent_files_path = callback_data["sent_files_path"]
-    zipped_stat_files_path = callback_data["stat_files_path"]
-
-    sent_files_dir: str = remote_copy_etz_file(zipped_sent_files_path)
-    stat_files_dir: str = remote_copy_etz_file(zipped_stat_files_path)
-
-    report_file_path: str = generate_dump_report(sent_files_dir, stat_files_dir)
-    send_report_email([report_file_path])
+def handle_etz_report_callback() -> Literal[True]:
+    dump_report_file_path, network_report = generate_dump_report()
+    save_etz_network_report(network_report)
+    send_report_email([dump_report_file_path])
     return True
 
 

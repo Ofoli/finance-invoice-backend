@@ -42,3 +42,4 @@ ESME_SPACE_ROW = {
 ALERTS_SPACE_ROW = {**ESME_SPACE_ROW, "page_count": ""}
 ETZ_SENT_FILES_DIR = os.path.join(FILES_DIR, "etz", "sent_files")
 ETZ_STAT_FILES_DIR = os.path.join(FILES_DIR, "etz", "stat_files")
+ETZ_REPORT_FILES_DIR = os.path.join(FILES_DIR, "etz", "reports")

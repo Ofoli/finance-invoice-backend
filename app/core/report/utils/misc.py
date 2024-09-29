@@ -4,7 +4,7 @@ import zipfile
 
 from datetime import datetime, timedelta
 
-from ...constants import FILES_DIR
+from app.core.constants import FILES_DIR
 
 from ..constants import S3_CLIENT_AID
 
@@ -23,14 +23,12 @@ def get_previous_month() -> str:
     return previous_month.strftime("%Y-%m")
 
 
-def create_csv_report(data: list, filename: str) -> str:
+def create_csv_report(data: list, filename: str, dst_dir: str = FILES_DIR) -> str:
     if len(data) == 0:
         return ""
 
-    filepath: str = os.path.join(FILES_DIR, filename)
-
-    if not os.path.exists(FILES_DIR):
-        os.makedirs(FILES_DIR)
+    os.makedirs(FILES_DIR, exist_ok=True)
+    filepath: str = os.path.join(dst_dir, filename)
 
     with open(filepath, mode="w", newline="") as file:
         headers = data[0].keys()
@@ -45,9 +43,8 @@ def zip_blast_reports(src_files: list[str], dst_file: str) -> str:
     if len(src_files) == 0:
         return ""
 
+    os.makedirs(FILES_DIR, exist_ok=True)
     dst_path: str = os.path.join(FILES_DIR, dst_file)
-    if not os.path.exists(FILES_DIR):
-        os.makedirs(FILES_DIR)
 
     with zipfile.ZipFile(dst_path, "w") as zip_file:
         for filename in src_files:
