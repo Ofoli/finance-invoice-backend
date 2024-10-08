@@ -20,6 +20,7 @@ GET_USER_RATE_URL = f"{_s7_BASE_URL}/fetch-rates.php/"
 S3_REPORT_CALLBACK_URL = "/s3-callback"
 ETZ_REPORT_CALLBACK_URL = "/etz-callback"
 EMAIL_REPORT_CALLBACK_URL = "/email-report-callback"
+MONTHLY_REPORT_URL = "/monthly-report"
 
 
 # VALUES

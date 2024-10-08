@@ -8,8 +8,8 @@ from werkzeug.datastructures.file_storage import FileStorage
 from app.core.utils.auth import IsIPWhitelistedMixin
 from app.core.utils.http import Response
 from app.core.schemas.report import EmailReportCallbackDataSchema
-from .tasks import handle_s3_report_callback, handle_email_report_callback, handle_etz_report_callback
-from .utils.etz import save_etz_file
+from ..tasks import handle_s3_report_callback, handle_email_report_callback, handle_etz_report_callback
+from ..utils.etz import save_etz_file
 
 
 def handle_post_callback(schema: Callable, task_method: Callable):

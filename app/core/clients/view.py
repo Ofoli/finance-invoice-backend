@@ -9,6 +9,7 @@ from ..utils.auth import IsAuthedUserMixin
 from ..schemas.user import ApiClientSchema, EsmeClientSchema, BlastClientSchema, ClientTypeSchema
 
 from .queries import Client
+
 ClientSchema = ApiClientSchema | EsmeClientSchema | BlastClientSchema
 
 
@@ -58,7 +59,7 @@ class CreateClientView(BaseClientView):
 class ClientView(BaseClientView):
 
     def check_type(self, client_type):
-        if not client_type in [ctype.value for ctype in ClientType]:
+        if client_type not in [ctype.value for ctype in ClientType]:
             abort(HTTPStatus.BAD_REQUEST, "Invalid client_type in url")
 
     def get(self, client_type: str, id: int):
@@ -73,8 +74,7 @@ class ClientView(BaseClientView):
 
         try:
             validated_data = schema().load(request.get_json())  # type: ignore
-            updated_client = Client(
-                client_type).update_client(id, validated_data)
+            updated_client = Client(client_type).update_client(id, validated_data)
             return Response().success(schema().dump(updated_client))  # type: ignore
         except ValidationError as err:
             return Response(HTTPStatus.BAD_REQUEST).failed(err.messages)

@@ -1,3 +1,7 @@
+from typing import List, Dict
+from sqlalchemy import and_
+
+from app.config.extensions import db
 from app.core.models.report import ApiReport, BlastReport, EsmeReport, ApiEmailReport, WebEmailReport
 from app.core.utils.enums import ReportType
 
@@ -27,13 +31,9 @@ class Report:
             ApiReport: ["network", "page_count"],
             BlastReport: ["sent_date", "sender", "message", "total_pages"],
         }
-        required_keys = key_mapping.get(self._model)
-        if required_keys is None:
-            # for email reports
-            internal_format.update(data)
-        else:
-            for key in required_keys:
-                internal_format[key] = data[key]
+        required_keys = key_mapping.get(self._model, [])
+        for key in required_keys:
+            internal_format[key] = data[key]
 
         return internal_format
 
@@ -41,3 +41,16 @@ class Report:
         formatted_data: dict = self.__to_internal_format(user_id, month, data)
         report = self._model(**formatted_data)
         report.save()
+
+    def query(self, filters: Dict[str, str]) -> List[dict]:
+        return (
+            db.session.query(self._model)
+            .filter(
+                and_(
+                    self._model.month >= filters["start_date"],
+                    self._model.month <= filters["end_date"],
+                    self._model.user_id == filters["user"],
+                )
+            )
+            .all()
+        )

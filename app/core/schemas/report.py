@@ -1,5 +1,15 @@
 from marshmallow import fields
+from marshmallow import ValidationError
+
 from app.config.extensions import ma
+
+
+from app.core.utils.enums import ReportType
+
+
+def validate_service(service: str):
+    if service not in [service.value for service in ReportType]:
+        raise ValidationError("Invalid service")
 
 
 class EmailReportCallbackDataSchema(ma.Schema):
@@ -11,3 +21,10 @@ class EmailReportCallbackDataSchema(ma.Schema):
 class EtzReportCallbackDataSchema(ma.Schema):
     sent_files_path = fields.String(required=True)
     stat_files_path = fields.String(required=True)
+
+
+class MonthlyReportSchema(ma.Schema):
+    user = fields.Integer(required=True)
+    service = fields.String(required=True, validate=validate_service)
+    start_date = fields.String(required=True)
+    end_date = fields.String(required=True)
