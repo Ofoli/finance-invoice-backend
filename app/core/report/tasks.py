@@ -1,7 +1,10 @@
 from typing import Dict, List, Literal
+from typing import Dict, List, Literal
 import celery
 
 from ..utils.http import Request
+from ..utils.enums import ClientType
+from ..clients.queries import Client, ModelClient
 from ..utils.enums import ClientType
 from ..clients.queries import Client, ModelClient
 
@@ -16,6 +19,7 @@ from .utils.processors import fetch_alerts, fetch_esme_counts, fetch_blasts
 
 @celery.shared_task(ignore_result=False)
 def initiate_s3_fetch_script() -> dict:
+    payload: Dict[str, List[str] | str] = get_initiate_fetch_payload()
     payload: Dict[str, List[str] | str] = get_initiate_fetch_payload()
     status, data = Request.post(INITIATE_FETCH_URL, payload)
     return handle_s3_script_response("S3", status, data)

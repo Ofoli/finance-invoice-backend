@@ -2,8 +2,8 @@ from flask import Blueprint
 from flask_restful import Api
 
 # from .tasks import initiate_s3_fetch_script
-from report.views.callbacks import S3ReportCallbackView, EmailReportCallbackView, EtzReportCallbackView
-from report.views.query import MonthlyReportView
+from .views.callbacks import S3ReportCallbackView, EmailReportCallbackView, EtzReportCallbackView
+from .views.query import MonthlyReportView
 from .constants import S3_REPORT_CALLBACK_URL, EMAIL_REPORT_CALLBACK_URL, ETZ_REPORT_CALLBACK_URL, MONTHLY_REPORT_URL
 
 report_bp = Blueprint("report", __name__)
