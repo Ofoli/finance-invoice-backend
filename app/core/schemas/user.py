@@ -12,18 +12,14 @@ def should_be_nalo_email(email: str):
 
 
 def validate_client_type(client_type: str):
-    if not client_type in [ctype.value for ctype in ClientType]:
+    if client_type not in [ctype.value for ctype in ClientType]:
         raise ValidationError("Invalid client_type")
 
 
 class AuthUserSchema(ma.SQLAlchemyAutoSchema):
 
     email = fields.Email(required=True, validate=should_be_nalo_email)
-    password = fields.String(
-        required=True,
-        load_only=True,
-        validate=validate.Length(min=12)
-    )
+    password = fields.String(required=True, load_only=True, validate=validate.Length(min=12))
 
     class Meta:  # type: ignore
         model = AuthUser
@@ -56,5 +52,4 @@ class LoginSchema(ma.Schema):
 
 class ResetPasswordSchema(ma.Schema):
     password = fields.String(required=True)
-    new_password = fields.String(
-        required=True, validate=validate.Length(min=12))
+    new_password = fields.String(required=True, validate=validate.Length(min=12))
