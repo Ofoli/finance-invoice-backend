@@ -11,7 +11,7 @@ from .misc import extract_reseller_prefix
 logger: logging.Logger = logging.getLogger(APP_LOGGER)
 
 
-def save_email_report(reports: list[dict], client_type: ClientType, month: str) -> None:
+def save_email_reports(reports: list[dict], client_type: ClientType, month: str) -> None:
     client = Client(client_type.value)
 
     for report in reports:

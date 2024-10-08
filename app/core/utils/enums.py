@@ -10,3 +10,11 @@ class ClientType(Enum):
 class BlastClientLevel(Enum):
     USER = "user"
     RESELLER = "reseller"
+
+
+class ReportType(Enum):
+    SMSAPI = 0
+    SMSWEB = 1
+    SMPP = 2
+    EMAILAPI = 3
+    EMAILWEB = 4

@@ -7,9 +7,11 @@ from ..clients.queries import Client, ModelClient
 
 from .constants import INITIATE_FETCH_URL, INITIATE_ETZ_URL
 from .utils.s3 import get_initiate_fetch_payload, handle_s3_script_response
+from .utils.email import save_email_reports
+from .utils.sms import save_sms_api_reports, save_sms_web_reports, save_esme_reports
 from .utils.etz import save_etz_network_report, generate_dump_report
 from .utils.misc import get_previous_month, create_csv_report, zip_blast_reports, send_report_email
-from .utils.processors import fetch_alerts, fetch_esme_counts, fetch_blasts, process_email_reports
+from .utils.processors import fetch_alerts, fetch_esme_counts, fetch_blasts
 
 
 @celery.shared_task(ignore_result=False)
@@ -32,9 +34,11 @@ def handle_s3_report_callback() -> Literal[True]:
 
     alerts: List[Dict] = fetch_alerts(clients[ClientType.API.value])
     alerts_filename: str = create_csv_report(alerts, f"alerts_{month}.csv")
+    save_sms_api_reports(alerts, month)
 
     esme_counts: List[Dict] = fetch_esme_counts(clients[ClientType.ESME.value])
     esme_filename: str = create_csv_report(esme_counts, f"esmes_{month}.csv")
+    save_esme_reports(esme_counts, month)
 
     blasts: List[Dict] = fetch_blasts(clients[ClientType.BLAST.value])
     blast_filenames: List[str] = [
@@ -43,6 +47,7 @@ def handle_s3_report_callback() -> Literal[True]:
         if (dst_path := create_csv_report(blast["report"], f"blast_{blast['account']}.csv"))
     ]
     blasts_filename = zip_blast_reports(blast_filenames, f"blasts_{month}.zip")
+    save_sms_web_reports(blasts, month)
 
     send_report_email([alerts_filename, esme_filename, blasts_filename])
     return True
@@ -62,8 +67,8 @@ def handle_email_report_callback(callback_data: dict) -> Literal[True]:
     api_reports: list[dict] = callback_data["api_reports"]
     web_reports: list[dict] = callback_data["web_reports"]
 
-    process_email_reports(api_reports, month, ClientType.API)
-    process_email_reports(web_reports, month, ClientType.BLAST)
+    save_email_reports(api_reports, ClientType.API, month)
+    save_email_reports(web_reports, ClientType.BLAST, month)
 
     api_report_filename = create_csv_report(api_reports, f"api_email_{month}.csv")
     web_report_filename = create_csv_report(web_reports, f"web_email_{month}.csv")

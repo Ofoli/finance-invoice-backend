@@ -1,9 +1,7 @@
-from app.core.utils.enums import ClientType
 from ..constants import NETWORKS, ALERTS_SPACE_ROW, ESME_SPACE_ROW
 
 from .s3 import fetch_reseller_users, fetch_s3_user_report, fetch_s9_user_report
 from .s7 import fetch_blast_report, extract_blast_params, decrypt_message
-from .s9 import save_email_report
 from .misc import is_s3_client, get_previous_month
 
 
@@ -66,7 +64,7 @@ def _format_blast_report(report: list[dict]) -> list[dict]:
         {
             "jobid": record["jobid"],
             "sent_date": record["sent_date"],
-            "username": record["username"],
+            "account": record["username"],
             "sender": record["sender"],
             "total_sms": (total_pages := int(record["total_sms"])) / int(record["pages_count"]),
             "total_pages": total_pages,
@@ -113,7 +111,3 @@ def fetch_blasts(blast_clients: list) -> list[dict]:
         for client in blast_clients
         if (report := fetch_blast_report(*extract_blast_params(client)))
     ]
-
-
-def process_email_reports(reports: list[dict], month: str, client_type: ClientType):
-    save_email_report(reports=reports, client_type=client_type, month=month)
