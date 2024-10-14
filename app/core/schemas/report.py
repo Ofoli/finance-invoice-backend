@@ -4,12 +4,16 @@ from marshmallow import ValidationError
 from app.config.extensions import ma
 
 
-from app.core.utils.enums import ReportType
+from app.core.utils.enums import ReportType, ClientType
 
 
-def validate_service(service: str):
+def _validate_service(service: str):
     if service not in [service.value for service in ReportType]:
         raise ValidationError("Invalid service")
+
+
+def validate_client_service(client_service: str) -> bool:
+    return client_service in [ctype.value for ctype in ClientType]
 
 
 class EmailReportCallbackDataSchema(ma.Schema):
@@ -25,6 +29,6 @@ class EtzReportCallbackDataSchema(ma.Schema):
 
 class MonthlyReportSchema(ma.Schema):
     user = fields.Integer(required=True)
-    service = fields.String(required=True, validate=validate_service)
+    service = fields.String(required=True, validate=_validate_service)
     start_date = fields.String(required=True)
     end_date = fields.String(required=True)
