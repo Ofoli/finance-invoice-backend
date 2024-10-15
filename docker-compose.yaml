@@ -23,7 +23,7 @@ services:
     volumes:
       - ./app:/app
     ports:
-      - "8800:8800"
+      - "${APP_PORT}:8800"
     depends_on:
       - db
       - redis
