@@ -19,14 +19,11 @@ class Auth:
             if user is not None and user.check_password(password):
                 auth_token = user.generate_auth_token()
                 response = dict(
-                    id=user.id,
-                    email=user.email,
-                    fullname=user.fullname,
-                    token=auth_token
+                    id=user.id, email=user.email, fullname=user.fullname, token=auth_token
                 )
                 return Response().success(response)
             else:
-                response = 'Invalid email or password'
+                response = "Invalid email or password"
                 return Response(HTTPStatus.PRECONDITION_FAILED).failed(response)
 
         except Exception as e:

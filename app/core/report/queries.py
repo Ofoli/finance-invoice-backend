@@ -4,7 +4,13 @@ from sqlalchemy.engine.row import Row
 
 from app.config.extensions import db
 from app.core.clients.queries import Client
-from app.core.models.report import ApiReport, BlastReport, EsmeReport, ApiEmailReport, WebEmailReport
+from app.core.models.report import (
+    ApiReport,
+    BlastReport,
+    EsmeReport,
+    ApiEmailReport,
+    WebEmailReport,
+)
 from app.core.utils.enums import ReportType, ClientType
 
 Reports = List[Dict[str, str]]
@@ -12,10 +18,10 @@ SMSReportModel = Union[EsmeReport, ApiReport, BlastReport]
 
 
 class Report:
-    def __init__(self, report_type: ReportType) -> None:
+    def __init__(self, report_type: int) -> None:
         self.__set_model(report_type=report_type)
 
-    def __set_model(self, report_type: ReportType) -> None:
+    def __set_model(self, report_type: int) -> None:
         models = {
             ReportType.SMPP.value: EsmeReport,
             ReportType.SMSAPI.value: ApiReport,
@@ -23,7 +29,7 @@ class Report:
             ReportType.EMAILAPI.value: ApiEmailReport,
             ReportType.EMAILWEB.value: WebEmailReport,
         }
-        model = models.get(report_type.value)
+        model = models.get(report_type)
         if model is None:
             raise ValueError(f"{report_type} is not a valid report type")
 

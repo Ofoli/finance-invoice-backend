@@ -24,7 +24,7 @@ class BaseClientView(IsAuthedUserMixin):
     def check_type(self, client_type: str):
         try:
             ClientTypeSchema().load(dict(client_type=client_type))
-        except ValidationError as err:
+        except ValidationError:
             abort(HTTPStatus.BAD_REQUEST, "Invalid client_type in url")
 
 

@@ -77,7 +77,7 @@ class ApiClient(BasePostpaidClient):
 
     aid = Column(String, nullable=False)
     reseller_prefix = Column(String)
-    has_email = Column(Boolean, default=False)
+    has_email = Column(Boolean, nullable=False, default=False)
 
 
 class BlastClient(BasePostpaidClient):
@@ -85,8 +85,8 @@ class BlastClient(BasePostpaidClient):
 
     user_id = Column(Integer, nullable=False)
     reseller_id = Column(Integer, nullable=False)
-    is_reseller = Column(Boolean, default=False)
-    has_email = Column(Boolean, default=False)
+    is_reseller = Column(Boolean, nullable=False, default=False)
+    has_email = Column(Boolean, nullable=False, default=False)
 
 
 class ESMEClient(BasePostpaidClient):

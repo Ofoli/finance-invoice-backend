@@ -1,10 +1,7 @@
 from typing import Dict, List, Literal
-from typing import Dict, List, Literal
 import celery
 
 from ..utils.http import Request
-from ..utils.enums import ClientType
-from ..clients.queries import Client, ModelClient
 from ..utils.enums import ClientType
 from ..clients.queries import Client, ModelClient
 

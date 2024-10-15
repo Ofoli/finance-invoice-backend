@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, IntEnum
 
 
 class ClientType(Enum):
@@ -12,7 +12,7 @@ class BlastClientLevel(Enum):
     RESELLER = "reseller"
 
 
-class ReportType(Enum):
+class ReportType(IntEnum):
     SMSAPI = 0
     SMSWEB = 1
     SMPP = 2

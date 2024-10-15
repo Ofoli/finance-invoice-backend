@@ -8,7 +8,7 @@ from app.core.utils.enums import ReportType, ClientType
 
 
 def _validate_service(service: str):
-    if service not in [service.value for service in ReportType]:
+    if int(service) not in [rtype.value for rtype in ReportType]:
         raise ValidationError("Invalid service")
 
 

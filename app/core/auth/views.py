@@ -19,8 +19,7 @@ class LoginView(Resource):
         try:
             validated_data: Any = self.schema().load(request.get_json())
             return Auth.login_user(
-                email=validated_data["email"],
-                password=validated_data["password"]
+                email=validated_data["email"], password=validated_data["password"]
             )
 
         except ValidationError as err:
@@ -36,7 +35,7 @@ class ResetPassword(IsAuthedUserMixin):
             return Auth.reset_password(
                 user=self.user,
                 password=validated_data["password"],
-                new_password=validated_data["new_password"]
+                new_password=validated_data["new_password"],
             )
 
         except ValidationError as err:

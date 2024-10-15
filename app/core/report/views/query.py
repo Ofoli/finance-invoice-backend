@@ -7,7 +7,7 @@ from app.core.schemas.report import MonthlyReportSchema, validate_client_service
 from app.core.utils.auth import IsAuthedUserMixin
 from app.core.utils.http import Response
 
-from report.queries import Report, Statistics
+from ..queries import Report, Statistics
 
 
 class MonthlyReportView(IsAuthedUserMixin):
@@ -16,7 +16,7 @@ class MonthlyReportView(IsAuthedUserMixin):
     def get(self):
         try:
             params = cast(dict, self.schema().load(request.args.to_dict()))
-            report = Report(report_type=params["service"]).query(params)
+            report = Report(report_type=int(params["service"])).query(params)
             return Response().success(report)
         except ValidationError as err:
             return Response(HTTPStatus.BAD_REQUEST).failed(err.messages)

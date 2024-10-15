@@ -27,7 +27,7 @@ class ApiReport(BaseReport):
     user_id = Column(Integer, ForeignKey("api_client.id"), nullable=False, index=True)
     network = Column(String(100), nullable=False)
 
-    user = relationship("api_client")
+    user = relationship("ApiClient")
 
     __table_args__ = (Index("apidx_user_id_month", "user_id", "month"),)
 
@@ -40,7 +40,7 @@ class BlastReport(BaseReport):
     sent_date = Column(DateTime, nullable=False)
     sender = Column(String(100), nullable=False)
 
-    user = relationship("blast_client")
+    user = relationship("BlastClient")
 
     __table_args__ = (Index("blastix_user_id_month", "user_id", "month"),)
 
@@ -51,7 +51,7 @@ class EsmeReport(BaseReport):
     user_id = Column(Integer, ForeignKey("esme_client.id"), nullable=False, index=True)
     network = Column(String(100), nullable=False)
 
-    user = relationship("esme_client")
+    user = relationship("ESMEClient")
 
     __table_args__ = (Index("esmeix_user_id_month", "user_id", "month"),)
 
@@ -74,7 +74,7 @@ class ApiEmailReport(BaseEmailReport):
     __tablename__ = "email_api_report"
 
     user_id = Column(Integer, ForeignKey("api_client.id"), nullable=False, index=True)
-    user = relationship("api_client")
+    user = relationship("ApiClient")
 
     __table_args__ = (Index("email_apidx_user_id_month", "user_id", "month"),)
 
@@ -82,7 +82,7 @@ class ApiEmailReport(BaseEmailReport):
 class WebEmailReport(BaseEmailReport):
     __tablename__ = "email_web_report"
 
-    user_id = Column(Integer, ForeignKey("blast_client.id"), nullable=False, index=True)
-    user = relationship("blast_client")
+    user_id = Column(Integer, ForeignKey("api_client.id"), nullable=False, index=True)
+    user = relationship("ApiClient")
 
     __table_args__ = (Index("email_webidx_user_id_month", "user_id", "month"),)
