@@ -5,6 +5,7 @@ basedir: str = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     DEBUG = False
+    PORT = int(os.getenv("APP_PORT", 5000))
     SECRET_KEY = os.getenv("APP_SECRET_KEY", "")
     REDIS_HOST = os.getenv("REDIS_HOST", "")
     CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "")
