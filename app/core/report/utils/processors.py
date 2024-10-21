@@ -1,4 +1,4 @@
-from ..constants import NETWORKS, ALERTS_SPACE_ROW, ESME_SPACE_ROW
+from ..constants import NETWORKS, CSV_SPACE_ROW
 
 from .s3 import fetch_reseller_users, fetch_s3_user_report, fetch_s9_user_report
 from .s7 import fetch_blast_report, extract_blast_params, decrypt_message
@@ -39,7 +39,7 @@ def _format_esme_report(esme: str, report: list[dict]) -> list[dict]:
 
         formatted_report[network]["total_pages"] += int(record["count"])
 
-    return list(formatted_report.values()) + [ESME_SPACE_ROW, ESME_SPACE_ROW]
+    return list(formatted_report.values()) + [CSV_SPACE_ROW, CSV_SPACE_ROW]
 
 
 def _format_api_report(username: str, report: list[dict]) -> list[dict]:
@@ -62,7 +62,7 @@ def _format_api_report(username: str, report: list[dict]) -> list[dict]:
         formatted_report[network]["total_pages"] += int(record.get("count", "0"))
         formatted_report[network]["total_pages"] += int(record.get("page_count", "0"))
 
-    return list(formatted_report.values()) + [ALERTS_SPACE_ROW, ALERTS_SPACE_ROW]
+    return list(formatted_report.values()) + [CSV_SPACE_ROW, CSV_SPACE_ROW]
 
 
 def _format_blast_report(report: list[dict]) -> list[dict]:
