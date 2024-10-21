@@ -36,13 +36,14 @@ DEFAULT_RATE = 0.032
 DEFAULT_EMAIL_RATE = 0.04
 NETWORKS = {
     "GLO": "23323",
-    "EXPRESS0": "23328",
+    "EXPRESSO": "23328",
     "VODAFONE": "23350|23320",
     "AIRTELTIGO": "23327|23357|23326|23356",
     "MTN": "23324|23325|23359|23355|23354|23353",
 }
-CSV_SPACE_ROW = {
+ESME_SPACE_ROW = {
     "account": "",
     "network": "",
     "total_pages": "",
 }
+ALERTS_SPACE_ROW = {**ESME_SPACE_ROW, "count": ""}

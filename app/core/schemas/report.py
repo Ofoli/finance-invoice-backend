@@ -2,8 +2,6 @@ from marshmallow import fields
 from marshmallow import ValidationError
 
 from app.config.extensions import ma
-
-
 from app.core.utils.enums import ReportType, ClientType
 
 
@@ -32,3 +30,14 @@ class MonthlyReportSchema(ma.Schema):
     service = fields.String(required=True, validate=_validate_service)
     start_date = fields.String(required=True)
     end_date = fields.String(required=True)
+
+
+class ReportQuerySchema(ma.SQLAlchemyAutoSchema):
+
+    @classmethod
+    def create(cls, report_model):
+        class ReportSchema(cls):
+            class Meta(cls.Meta):
+                model = report_model
+
+        return ReportSchema

@@ -24,7 +24,7 @@ def _save_reports(client_type: ClientType, report_type: ReportType) -> ReportSav
                     username=username
                 )
                 if user is None:
-                    key = f"Report<type={report_type.value}, username={username}>"
+                    key = f"Report<type={report_type.name}, username={username}>"
                     logger.error(f"user not found for {key}")
                     continue
 
