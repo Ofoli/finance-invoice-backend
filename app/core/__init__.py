@@ -13,8 +13,7 @@ load_dotenv()
 
 
 def _create_logger(name: str, file_path: str) -> None:
-    formatter = logging.Formatter(
-        "%(asctime)s %(levelname)s %(name)s %(message)s")
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
 
     logs_dir: str = os.path.dirname(file_path)
     os.makedirs(logs_dir, exist_ok=True)
@@ -38,7 +37,7 @@ def _register_blueprints(app: Flask):
     app.register_blueprint(users_bp, url_prefix="/api/users")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(client_bp, url_prefix="/api/clients")
-    app.register_blueprint(report_bp, url_prefix="/api/report")
+    app.register_blueprint(report_bp, url_prefix="/api/reports")
 
 
 def create_app(config_name: str) -> Flask:
