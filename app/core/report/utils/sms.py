@@ -1,12 +1,15 @@
+import logging
+
 from typing import Callable, List, Optional
 
-from app.core.utils.enums import ReportType, ClientType
 from app.core.clients.queries import ModelClient, Client
-
-from ..queries import Report
-
+from app.core.constants import APP_LOGGER
+from app.core.report.queries import Report
+from app.core.utils.enums import ReportType, ClientType
 
 ReportSaver = Callable[[List[dict]], None]
+
+logger = logging.getLogger(APP_LOGGER)
 
 
 def _save_reports(client_type: ClientType, report_type: ReportType) -> ReportSaver:
@@ -20,6 +23,11 @@ def _save_reports(client_type: ClientType, report_type: ReportType) -> ReportSav
                 user: Optional[ModelClient] = client_service.get_client_by_username(
                     username=username
                 )
+                if user is None:
+                    key = f"Report<type={report_type.value}, username={username}>"
+                    logger.error(f"user not found for {key}")
+                    continue
+
                 report_service.add(user_id=user.id, data=data)  # type: ignore
 
     return saver
