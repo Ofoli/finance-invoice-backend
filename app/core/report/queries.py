@@ -11,6 +11,7 @@ from app.core.models.report import (
     ApiEmailReport,
     WebEmailReport,
 )
+from app.core.schemas.report import ReportQuerySchema
 from app.core.utils.enums import ReportType, ClientType
 
 Reports = List[Dict[str, str]]
@@ -54,7 +55,7 @@ class Report:
         report.save()
 
     def query(self, filters: Dict[str, str]) -> List[Dict[str, str]]:
-        return (
+        report = (
             db.session.query(self.__model)
             .filter(
                 and_(
@@ -65,6 +66,8 @@ class Report:
             )
             .all()
         )
+        schema = ReportQuerySchema.create(self.__model)
+        return schema(many=True).dump(report)
 
 
 class Statistics:
