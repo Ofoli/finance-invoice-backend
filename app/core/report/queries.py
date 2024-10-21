@@ -39,7 +39,7 @@ class Report:
         internal_format = dict(user_id=user_id, month=month)
         key_mapping = {
             EsmeReport: ["network"],
-            ApiReport: ["network", "page_count"],
+            ApiReport: ["network", "total_pages"],
             BlastReport: ["sent_date", "sender", "message", "total_pages"],
         }
         required_keys = key_mapping.get(self.__model, [])
