@@ -35,10 +35,10 @@ class Report:
 
         self.__model = model
 
-    def __to_internal_format(self, user_id: int, month: str, data: dict) -> dict:
-        internal_format = dict(user_id=user_id, month=month)
+    def __to_internal_format(self, user_id: int, data: dict) -> dict:
+        internal_format = dict(user_id=user_id)
         key_mapping = {
-            EsmeReport: ["network"],
+            EsmeReport: ["network", "total_pages"],
             ApiReport: ["network", "total_pages"],
             BlastReport: ["sent_date", "sender", "message", "total_pages"],
         }
@@ -48,8 +48,8 @@ class Report:
 
         return internal_format
 
-    def add(self, user_id: int, month: str, data: dict) -> None:
-        formatted_data: dict = self.__to_internal_format(user_id, month, data)
+    def add(self, user_id: int, data: dict) -> None:
+        formatted_data: dict = self.__to_internal_format(user_id, data)
         report = self.__model(**formatted_data)
         report.save()
 

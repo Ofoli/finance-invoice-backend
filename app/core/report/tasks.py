@@ -35,11 +35,11 @@ def handle_s3_report_callback() -> Literal[True]:
 
     alerts: List[Dict] = fetch_alerts(clients[ClientType.API.value])
     alerts_filename: str = create_csv_report(alerts, f"alerts_{month}.csv")
-    save_sms_api_reports(alerts, month)
+    save_sms_api_reports(alerts)
 
     esme_counts: List[Dict] = fetch_esme_counts(clients[ClientType.ESME.value])
     esme_filename: str = create_csv_report(esme_counts, f"esmes_{month}.csv")
-    save_esme_reports(esme_counts, month)
+    save_esme_reports(esme_counts)
 
     blasts: List[Dict] = fetch_blasts(clients[ClientType.BLAST.value])
     blast_filenames: List[str] = [
@@ -48,7 +48,7 @@ def handle_s3_report_callback() -> Literal[True]:
         if (dst_path := create_csv_report(blast["report"], f"blast_{blast['account']}.csv"))
     ]
     blasts_filename = zip_blast_reports(blast_filenames, f"blasts_{month}.zip")
-    save_sms_web_reports(blasts, month)
+    save_sms_web_reports(blasts)
 
     send_report_email([alerts_filename, esme_filename, blasts_filename])
     return True
