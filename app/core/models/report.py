@@ -36,6 +36,7 @@ class BlastReport(BaseReport):
     __tablename__ = "blast_report"
 
     user_id = Column(Integer, ForeignKey("blast_client.id"), nullable=False, index=True)
+    account = Column(String, nullable=False)
     message = Column(String, nullable=False)
     sent_date = Column(DateTime, nullable=False)
     sender = Column(String(100), nullable=False)

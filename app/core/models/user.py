@@ -83,8 +83,7 @@ class ApiClient(BasePostpaidClient):
 class BlastClient(BasePostpaidClient):
     __tablename__ = "blast_client"
 
-    user_id = Column(Integer, nullable=False)
-    reseller_id = Column(Integer, nullable=False)
+    key_id = Column(Integer, nullable=False)
     is_reseller = Column(Boolean, nullable=False, default=False)
     has_email = Column(Boolean, nullable=False, default=False)
 
