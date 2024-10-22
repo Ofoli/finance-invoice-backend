@@ -81,26 +81,25 @@ def _format_blast_report(report: list[dict]) -> list[dict]:
 
 
 def fetch_alerts(api_clients: list) -> list[dict]:
-    reseller_users: list[str] = fetch_reseller_users()
+    s3_users: set[str] = set(fetch_reseller_users())
     s9_users: list[dict] = []
-    s3_users: list[str] = []
     alerts: list[dict] = []
 
     for client in api_clients:
         if is_s3_client(client.aid):
-            s3_users.append(client.username)
+            s3_users.add(client.username)
         else:
             s9_users.append({"aid": client.aid, "username": client.username})
 
-    for username in sorted(reseller_users + s3_users, key=lambda x: x):
+    for username in s3_users:
         report: list = fetch_s3_user_report(username)
         alerts += _format_api_report(username, report)
 
-    for user in sorted(s9_users, key=lambda x: x["username"]):
+    for user in s9_users:
         report: list = fetch_s9_user_report(user["aid"])
         alerts += _format_api_report(user["username"], report)
 
-    return alerts
+    return sorted(alerts, key=lambda x: x["account"])
 
 
 def fetch_esme_counts(esme_clients: list) -> list[dict]:

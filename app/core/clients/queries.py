@@ -15,13 +15,16 @@ class Client:
             ClientType.BLAST.value: BlastClient,
         }.get(client_type, ESMEClient)
 
+    # def __eq__(self, other):
+    #     return isinstance(other, Client) and self._Model == other._Model
+
     @staticmethod
     def get_all() -> Dict[str, List[ModelClient]]:
-        return ({
+        return {
             ClientType.API.value: ApiClient.query.all(),
             ClientType.BLAST.value: BlastClient.query.all(),
-            ClientType.ESME.value: ESMEClient.query.all()
-        })
+            ClientType.ESME.value: ESMEClient.query.all(),
+        }
 
     def create(self, data: Dict) -> ModelClient:
         client = self._Model(**data)
