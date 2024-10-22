@@ -1,5 +1,5 @@
 from typing import List, Dict, Tuple, Union
-from sqlalchemy import and_, desc, func
+from sqlalchemy import and_, desc, func, cast, String
 from sqlalchemy.engine.row import Row
 
 from app.config.extensions import db
@@ -13,6 +13,7 @@ from app.core.models.report import (
 )
 from app.core.schemas.report import ReportQuerySchema
 from app.core.utils.enums import ReportType, ClientType
+from app.core.report.utils.misc import get_report_period, get_year_period
 
 Reports = List[Dict[str, str]]
 SMSReportModel = Union[EsmeReport, ApiReport, BlastReport]
@@ -72,26 +73,26 @@ class Report:
 
 class Statistics:
     __model_mapping: dict = {
-        Client(ClientType.API.value): ApiReport,
-        Client(ClientType.BLAST.value): BlastReport,
-        Client(ClientType.ESME.value): EsmeReport,
+        ClientType.API.value: ApiReport,
+        ClientType.BLAST.value: BlastReport,
+        ClientType.ESME.value: EsmeReport,
     }
 
     def get_top5_clients_stats(self) -> List[dict]:
         client_stats = [
             {
                 "id": user_id,
-                "username": client_service.get_client(user_id).username,
+                "username": Client(client_type).get_client(user_id).username,
                 "total_pages": total_pages,
             }
-            for client_service, report_model in self.__model_mapping.items()
+            for client_type, report_model in self.__model_mapping.items()
             for user_id, total_pages in self.__get_top5_stats_per_model(report_model)
         ]
         client_stats.sort(key=lambda report: report["total_pages"])
         return client_stats[-5:]
 
     def get_service_yearly_stats(self, service: str) -> List[dict]:
-        model = self.__model_mapping.get(Client(service))
+        model = self.__model_mapping.get(service)
         if model is None:
             return []
         return [
@@ -101,9 +102,10 @@ class Statistics:
 
     def __get_top5_stats_per_model(self, model: SMSReportModel) -> List[Row[Tuple[int, int]]]:
         total_pages_sum = func.sum(model.total_pages)
+        start_date, end_date = get_report_period()
         return (
             db.session.query(model.user_id, total_pages_sum.label("total_pages_sum"))
-            .filter(model.month > "2023-01-01", model.month < "2024-02-01")
+            .filter(model.month > start_date, model.month <= end_date)
             .group_by(model.user_id)
             .order_by(desc("total_pages_sum"))
             .limit(5)
@@ -111,9 +113,11 @@ class Statistics:
         )
 
     def __get_year_stats_per_model(self, model: SMSReportModel):
+        start_date, end_date = get_year_period()
         total_pages_sum = func.sum(model.total_pages)
+        month_substr = func.substr(cast(model.month, String), 1, 7)
         return (
-            db.session.query(model.month, total_pages_sum.label("total_pages_sum"))
-            .filter(model.month > "2023-01-01", model.month < "2024-02-01")
-            .group_by(model.month)
+            db.session.query(month_substr, total_pages_sum.label("total_pages_sum"))
+            .filter(model.month > start_date, model.month <= end_date)
+            .group_by(month_substr)
         ).all()
