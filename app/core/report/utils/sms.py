@@ -28,6 +28,10 @@ def _save_reports(client_type: ClientType, report_type: ReportType) -> ReportSav
                     logger.error(f"user not found for {key}")
                     continue
 
+                if report_type is ReportType.SMSWEB:
+                    report_service.handle_bulk_add(user.id, data_list=data.get("report", []))
+                    continue
+
                 report_service.add(user_id=user.id, data=data)  # type: ignore
 
     return saver

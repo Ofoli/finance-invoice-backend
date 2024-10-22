@@ -8,3 +8,4 @@ files
 *.log
 *.so
 *.csv
+.DS_Store

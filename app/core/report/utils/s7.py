@@ -7,11 +7,7 @@ from ...utils.enums import BlastClientLevel
 from ...constants import APP_LOGGER
 from ...utils.http import Request
 
-from ..constants import (
-    DEFAULT_RATE,
-    GET_USER_RATE_URL,
-    GET_BLASTS_URL
-)
+from ..constants import DEFAULT_RATE, GET_USER_RATE_URL, GET_BLASTS_URL
 
 from .misc import get_blast_period
 
@@ -19,9 +15,10 @@ logger: logging.Logger = logging.getLogger(APP_LOGGER)
 
 
 def extract_blast_params(client: BlastClient) -> tuple[str, str]:
+    level = BlastClientLevel.USER.value
     if client.is_reseller is True:
-        return str(client.reseller_id), BlastClientLevel.RESELLER.value
-    return str(client.user_id), BlastClientLevel.USER.value
+        level = BlastClientLevel.RESELLER.value
+    return str(client.key_id), level
 
 
 def fetch_blast_report(uid: str, level: str) -> list[dict]:
@@ -45,8 +42,8 @@ def fetch_user_rate(username: str) -> float:
 
 def decrypt_message(message: str, key: str) -> str:
     try:
-        f = Fernet(bytes(key, 'utf-8'))
-        return f.decrypt(bytes(message, 'utf-8')).decode()
+        f = Fernet(bytes(key, "utf-8"))
+        return f.decrypt(bytes(message, "utf-8")).decode()
     except Exception as e:
         logger.error(f"error occured decrypting. Error:{e}")
         return message

@@ -42,7 +42,7 @@ class Report:
         key_mapping = {
             EsmeReport: ["network", "total_pages"],
             ApiReport: ["network", "total_pages"],
-            BlastReport: ["sent_date", "sender", "message", "total_pages"],
+            BlastReport: ["account", "sent_date", "sender", "message", "total_pages"],
         }
         required_keys = key_mapping.get(self.__model, [])
         for key in required_keys:
@@ -54,6 +54,11 @@ class Report:
         formatted_data: dict = self.__to_internal_format(user_id, data)
         report = self.__model(**formatted_data)
         report.save()
+
+    def handle_bulk_add(self, user_id, data_list: List[dict]) -> None:
+        reports = [self.__model(**self.__to_internal_format(user_id, data)) for data in data_list]
+        db.session.bulk_save_objects(reports)
+        db.session.commit()
 
     def query(self, filters: Dict[str, str]) -> List[Dict[str, str]]:
         report = (

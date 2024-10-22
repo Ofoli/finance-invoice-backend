@@ -15,7 +15,7 @@ INITIATE_FETCH_URL = f"{_s3_BASE_URL}/initiate-fetch.php"
 INITIATE_ETZ_URL = f"{_s3_BASE_URL}/initiate-etz-report.php"
 GET_RESELLER_USERS_URL = f"{_s3_BASE_URL}/get-reseller-users.php"
 GET_USER_REPORT_URL = f"{_s3_BASE_URL}/report.php"
-GET_BLASTS_URL = f"{_s7_BASE_URL}/blast"
+GET_BLASTS_URL = f"{_s7_BASE_URL}/invoice/blast"
 GET_USER_RATE_URL = f"{_s7_BASE_URL}/fetch-rates.php/"
 GET_S9_USER_REPORT = f"{_s9_BASE_URL}/network-report"
 
