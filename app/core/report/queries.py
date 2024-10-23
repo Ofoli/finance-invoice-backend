@@ -13,6 +13,7 @@ from app.core.models.report import (
 )
 from app.core.schemas.report import ReportQuerySchema
 from app.core.utils.enums import ReportType, ClientType
+from app.core.report.constants import S3_REPORT_KEYS, WEB_REPORT_KEYS, EMAIL_REPORT_KEYS
 from app.core.report.utils.misc import get_report_period, get_year_period
 
 Reports = List[Dict[str, str]]
@@ -40,9 +41,11 @@ class Report:
     def __to_internal_format(self, user_id: int, data: dict) -> dict:
         internal_format = dict(user_id=user_id)
         key_mapping = {
-            EsmeReport: ["network", "total_pages"],
-            ApiReport: ["network", "total_pages"],
-            BlastReport: ["account", "sent_date", "sender", "message", "total_pages"],
+            EsmeReport: S3_REPORT_KEYS,
+            ApiReport: S3_REPORT_KEYS,
+            BlastReport: WEB_REPORT_KEYS,
+            ApiEmailReport: EMAIL_REPORT_KEYS,
+            WebEmailReport: EMAIL_REPORT_KEYS,
         }
         required_keys = key_mapping.get(self.__model, [])
         for key in required_keys:

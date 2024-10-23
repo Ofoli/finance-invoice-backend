@@ -68,8 +68,8 @@ def handle_email_report_callback(callback_data: dict) -> Literal[True]:
     api_reports: list[dict] = callback_data["api_reports"]
     web_reports: list[dict] = callback_data["web_reports"]
 
-    save_email_reports(api_reports, ClientType.API, month)
-    save_email_reports(web_reports, ClientType.BLAST, month)
+    save_email_reports(api_reports, ClientType.API)
+    save_email_reports(web_reports, ClientType.BLAST)
 
     api_report_filename = create_csv_report(api_reports, f"api_email_{month}.csv")
     web_report_filename = create_csv_report(web_reports, f"web_email_{month}.csv")
