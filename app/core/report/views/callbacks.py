@@ -44,6 +44,6 @@ class EmailReportCallbackView(IsIPWhitelistedMixin):
         try:
             validated_data = self.__schema().load(request.get_json())
             task = handle_email_report_callback.delay(validated_data)  # type: ignore
-            return task.id
+            return Response().success(task.id)
         except ValidationError as err:
             return Response(HTTPStatus.BAD_REQUEST).failed(err.messages)

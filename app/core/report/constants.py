@@ -47,3 +47,15 @@ ESME_SPACE_ROW = {
     "total_pages": "",
 }
 ALERTS_SPACE_ROW = {**ESME_SPACE_ROW, "count": ""}
+S3_REPORT_KEYS = ["network", "total_pages"]
+WEB_REPORT_KEYS = ["account", "sent_date", "sender", "message", "total_pages"]
+EMAIL_REPORT_KEYS = [
+    "sent",
+    "delivered",
+    "clicked",
+    "opened",
+    "bounced",
+    "rejected",
+    "complaint",
+    "failed",
+]
