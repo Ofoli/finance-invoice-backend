@@ -1,3 +1,5 @@
+import mimetypes
+
 from flask import render_template
 from flask_mailman import EmailMessage
 
@@ -59,7 +61,10 @@ class AttachmentEmailNotification(BaseEmailNotification):
         for attachment_file_path in self.attachment_file_paths:
             with open(attachment_file_path, "rb") as f:
                 filename = attachment_file_path.split("/")[-1]
-                email.attach(filename, f.read(), "text/csv")
+                mime_type, _ = mimetypes.guess_type(attachment_file_path)
+                if not mime_type:
+                    mime_type = "application/octet-stream"
+                email.attach(filename, f.read(), mime_type)
 
         email.send()
         return f"Email with subject '{self.subject}' and attachment sent to {self.destination}"
