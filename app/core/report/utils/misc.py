@@ -5,11 +5,23 @@ import zipfile
 from datetime import datetime, timedelta
 
 from app.core.constants import FILES_DIR
+from app.core.notifications.email import AttachmentEmailNotification
+from app.core.report.constants import S3_CLIENT_AID, FINANCE_EMAIL, SUPPORT_EMAIL
+from app.core.utils.enums import ServiceType
 
-from ..constants import S3_CLIENT_AID
 
+def send_report_email(service: ServiceType, files: list[str]) -> str:
+    month = get_previous_month()
+    response = AttachmentEmailNotification(
+        subject=f"POSTPAID CLIENT {service.name} REPORT - {month}",
+        destination=FINANCE_EMAIL,
+        template="invoice_report.html",
+        template_data={},
+        attachment_file_paths=files,
+        cc=[SUPPORT_EMAIL],
+    ).send()
 
-def send_report_email(files: list[str]): ...
+    return response
 
 
 def extract_reseller_prefix(username: str) -> str:
