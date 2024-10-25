@@ -18,3 +18,8 @@ class ReportType(IntEnum):
     SMPP = 2
     EMAILAPI = 3
     EMAILWEB = 4
+
+
+class ServiceType(IntEnum):
+    SMS = 0
+    EMAIL = 1

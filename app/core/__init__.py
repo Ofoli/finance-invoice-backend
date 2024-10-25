@@ -7,7 +7,7 @@ from flask import Flask
 from app.config import app_config
 from app.config.extensions import init_extensions
 
-from .constants import LOGS_DIR, APP_LOGGER
+from app.core.constants import LOGS_DIR, APP_LOGGER
 
 load_dotenv()
 
@@ -29,10 +29,10 @@ def _create_logger(name: str, file_path: str) -> None:
 
 
 def _register_blueprints(app: Flask):
-    from .users import users_bp
-    from .auth import auth_bp
-    from .clients import client_bp
-    from .report import report_bp
+    from app.core.users import users_bp
+    from app.core.auth import auth_bp
+    from app.core.clients import client_bp
+    from app.core.report import report_bp
 
     app.register_blueprint(users_bp, url_prefix="/api/users")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
