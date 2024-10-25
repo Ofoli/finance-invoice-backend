@@ -30,6 +30,8 @@ YEARLY_SERVICE_STATS = "/yearly-service-counts"
 
 
 # VALUES
+FINANCE_EMAIL = os.environ.get("FINANCE_EMAIL", "")
+SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL", "")
 S3_CLIENT_AID = "s3000000"
 EMAIL_CLIENT_AID = "00000000"
 DEFAULT_RATE = 0.032
