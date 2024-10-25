@@ -17,12 +17,12 @@ class BaseEmailNotification:
         self.template = template
         self.template_data = template_data
         self.cc = cc
-        self.body = self.__render_body()
+        self.body = self._render_body()
 
-    def __render_body(self) -> str:
+    def _render_body(self) -> str:
         return render_template(self.template, **self.template_data)
 
-    def __create_email(self) -> EmailMessage:
+    def _create_email(self) -> EmailMessage:
         email = EmailMessage(
             subject=self.subject, body=self.body, to=[self.destination], cc=self.cc
         )
@@ -30,7 +30,7 @@ class BaseEmailNotification:
         return email
 
     def send(self) -> str:
-        email = self.__create_email()
+        email = self._create_email()
         email.send()
         return f"Email with subject '{self.subject}' sent to {self.destination}"
 
@@ -54,7 +54,7 @@ class AttachmentEmailNotification(BaseEmailNotification):
         self.attachment_file_paths = attachment_file_paths
 
     def send(self) -> str:
-        email = self.__create_email()
+        email = self._create_email()
 
         for attachment_file_path in self.attachment_file_paths:
             with open(attachment_file_path, "rb") as f:

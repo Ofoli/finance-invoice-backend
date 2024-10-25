@@ -34,7 +34,7 @@ def initiate_etz_report_script() -> Dict:
 
 
 @celery.shared_task(ignore_result=True)
-def handle_s3_report_callback() -> Literal[True]:
+def handle_s3_report_callback() -> str:
     month: str = get_previous_month()
     clients: Dict[str, List[ModelClient]] = Client.get_all()
 
@@ -55,8 +55,7 @@ def handle_s3_report_callback() -> Literal[True]:
     blasts_filename = zip_blast_reports(blast_filenames, f"blasts_{month}.zip")
     save_sms_web_reports(blasts)
 
-    send_report_email(ServiceType.SMS, [alerts_filename, esme_filename, blasts_filename])
-    return True
+    return send_report_email(ServiceType.SMS, [alerts_filename, esme_filename, blasts_filename])
 
 
 @celery.shared_task(ignore_result=True)
@@ -68,7 +67,7 @@ def handle_etz_report_callback() -> Literal[True]:
 
 
 @celery.shared_task(ignore_result=True)
-def handle_email_report_callback(callback_data: dict) -> Literal[True]:
+def handle_email_report_callback(callback_data: dict) -> str:
     month: str = callback_data["month"]
     api_reports: list[dict] = callback_data["api_reports"]
     web_reports: list[dict] = callback_data["web_reports"]
@@ -79,5 +78,4 @@ def handle_email_report_callback(callback_data: dict) -> Literal[True]:
     api_report_filename = create_csv_report(api_reports, f"api_email_{month}.csv")
     web_report_filename = create_csv_report(web_reports, f"web_email_{month}.csv")
 
-    send_report_email(ServiceType.EMAIL, [api_report_filename, web_report_filename])
-    return True
+    return send_report_email(ServiceType.EMAIL, [api_report_filename, web_report_filename])
