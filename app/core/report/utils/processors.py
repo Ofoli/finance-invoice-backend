@@ -11,7 +11,9 @@ def _get_network(network: str) -> str:
 
 
 def _get_prefix_network(prefix: str) -> str:
-    item: list[str] = [name for name, value in NETWORKS.items() if prefix.replace("+", "")[0:5] in value]
+    item: list[str] = [
+        name for name, value in NETWORKS.items() if prefix.replace("+", "")[0:5] in value
+    ]
     return item.pop() if bool(len(item)) else "UNKNOWN"
 
 
@@ -28,10 +30,14 @@ def _format_esme_report(esme: str, report: list[dict]) -> list[dict]:
 
         network: str = _get_prefix_network(record["prefix"])
         if network not in formatted_report:
-            formatted_report[network] = {"account": esme, "network": network, "count": int(record["count"])}
+            formatted_report[network] = {
+                "account": esme,
+                "network": network,
+                "total_pages": int(record["count"]),
+            }
             continue
 
-        formatted_report[network]["count"] += int(record["count"])
+        formatted_report[network]["total_pages"] += int(record["count"])
 
     return list(formatted_report.values()) + [ESME_SPACE_ROW, ESME_SPACE_ROW]
 
@@ -49,12 +55,12 @@ def _format_api_report(username: str, report: list[dict]) -> list[dict]:
                 "account": username,
                 "network": network,
                 "count": int(record.get("count", "0")),
-                "page_count": int(record.get("page_count", "0")),
+                "total_pages": int(record.get("page_count", "0")),
             }
             continue
         # this is to aggregate foreign network counts as one
         formatted_report[network]["count"] += int(record.get("count", "0"))
-        formatted_report[network]["page_count"] += int(record.get("page_count", "0"))
+        formatted_report[network]["total_pages"] += int(record.get("page_count", "0"))
 
     return list(formatted_report.values()) + [ALERTS_SPACE_ROW, ALERTS_SPACE_ROW]
 
@@ -75,26 +81,25 @@ def _format_blast_report(report: list[dict]) -> list[dict]:
 
 
 def fetch_alerts(api_clients: list) -> list[dict]:
-    reseller_users: list[str] = fetch_reseller_users()
+    s3_users: set[str] = set(fetch_reseller_users())
     s9_users: list[dict] = []
-    s3_users: list[str] = []
     alerts: list[dict] = []
 
     for client in api_clients:
         if is_s3_client(client.aid):
-            s3_users.append(client.username)
+            s3_users.add(client.username)
         else:
             s9_users.append({"aid": client.aid, "username": client.username})
 
-    for username in sorted(reseller_users + s3_users, key=lambda x: x):
+    for username in s3_users:
         report: list = fetch_s3_user_report(username)
         alerts += _format_api_report(username, report)
 
-    for user in sorted(s9_users, key=lambda x: x["username"]):
+    for user in s9_users:
         report: list = fetch_s9_user_report(user["aid"])
         alerts += _format_api_report(user["username"], report)
 
-    return alerts
+    return sorted(alerts, key=lambda x: x["account"])
 
 
 def fetch_esme_counts(esme_clients: list) -> list[dict]:

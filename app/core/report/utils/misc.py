@@ -5,11 +5,23 @@ import zipfile
 from datetime import datetime, timedelta
 
 from app.core.constants import FILES_DIR
+from app.core.notifications.email import AttachmentEmailNotification
+from app.core.report.constants import S3_CLIENT_AID, FINANCE_EMAIL, SUPPORT_EMAIL
+from app.core.utils.enums import ServiceType
 
-from ..constants import S3_CLIENT_AID
 
+def send_report_email(service: ServiceType, files: list[str]) -> str:
+    month = get_previous_month()
+    response = AttachmentEmailNotification(
+        subject=f"POSTPAID CLIENT {service.name} REPORT - {month}",
+        destination=FINANCE_EMAIL,
+        template="invoice_report.html",
+        template_data={},
+        attachment_file_paths=files,
+        cc=[SUPPORT_EMAIL],
+    ).send()
 
-def send_report_email(files: list[str]): ...
+    return response
 
 
 def extract_reseller_prefix(username: str) -> str:
@@ -62,7 +74,9 @@ def get_report_period() -> tuple[str, str]:
     first_day_of_current_month = today.replace(day=1)
     last_day_of_previous_month = first_day_of_current_month - timedelta(days=1)
     first_day_of_previous_month = last_day_of_previous_month.replace(day=1)
-    return first_day_of_previous_month.strftime("%Y-%m-%d"), last_day_of_previous_month.strftime("%Y-%m-%d")
+    return first_day_of_previous_month.strftime("%Y-%m-%d"), last_day_of_previous_month.strftime(
+        "%Y-%m-%d"
+    )
 
 
 def get_blast_period() -> tuple[str, str]:
@@ -72,3 +86,10 @@ def get_blast_period() -> tuple[str, str]:
     next_month = str(value + 1 if (value := int(mth)) != 12 else 1)
     end_date = f"{year}-{next_month.zfill(2)}-01"
     return start_date, end_date
+
+
+def get_year_period() -> tuple[str, str]:
+    today = datetime.today()
+    one_year_ago = today - timedelta(days=365)
+    one_day_ahead = today + timedelta(days=1)
+    return one_year_ago.strftime("%Y-%m-%d"), one_day_ahead.strftime("%Y-%m-%d")
