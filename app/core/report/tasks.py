@@ -42,20 +42,20 @@ def handle_s3_report_callback() -> str:
     alerts_filename: str = create_csv_report(alerts, f"alerts_{month}.csv")
     save_sms_api_reports(alerts)
 
-    # esme_counts: List[Dict] = fetch_esme_counts(clients[ClientType.ESME.value])
-    # esme_filename: str = create_csv_report(esme_counts, f"esmes_{month}.csv")
-    # save_esme_reports(esme_counts)
+    esme_counts: List[Dict] = fetch_esme_counts(clients[ClientType.ESME.value])
+    esme_filename: str = create_csv_report(esme_counts, f"esmes_{month}.csv")
+    save_esme_reports(esme_counts)
 
-    # blasts: List[Dict] = fetch_blasts(clients[ClientType.BLAST.value])
-    # blast_filenames: List[str] = [
-    #     dst_path
-    #     for blast in blasts
-    #     if (dst_path := create_csv_report(blast["report"], f"blast_{blast['account']}.csv"))
-    # ]
-    # blasts_filename = zip_blast_reports(blast_filenames, f"blasts_{month}.zip")
-    # save_sms_web_reports(blasts)
+    blasts: List[Dict] = fetch_blasts(clients[ClientType.BLAST.value])
+    blast_filenames: List[str] = [
+        dst_path
+        for blast in blasts
+        if (dst_path := create_csv_report(blast["report"], f"blast_{blast['account']}.csv"))
+    ]
+    blasts_filename = zip_blast_reports(blast_filenames, f"blasts_{month}.zip")
+    save_sms_web_reports(blasts)
 
-    return send_report_email(ServiceType.SMS, [alerts_filename])
+    return send_report_email(ServiceType.SMS, [alerts_filename, esme_filename, blasts_filename])
 
 
 @celery.shared_task(ignore_result=True)
