@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 from app.core.constants import FILES_DIR
 from app.core.notifications.email import AttachmentEmailNotification
-from app.core.report.constants import S3_CLIENT_AID, FINANCE_EMAIL, SUPPORT_EMAIL
+from app.core.report.constants import EMAIL_CLIENT_AID, S3_CLIENT_AID, FINANCE_EMAIL, SUPPORT_EMAIL
 from app.core.utils.enums import ServiceType
 
 
@@ -67,6 +67,10 @@ def zip_blast_reports(src_files: list[str], dst_file: str) -> str:
 
 def is_s3_client(aid: str) -> bool:
     return aid == S3_CLIENT_AID
+
+
+def is_sms_client(key: str | int) -> bool:
+    return str(key) != EMAIL_CLIENT_AID
 
 
 def get_report_period() -> tuple[str, str]:

@@ -26,7 +26,7 @@ def fetch_blast_report(uid: str, level: str) -> list[dict]:
     params = f"id={uid}&type={level}&start_date={sdt}&end_date={edt}"
     _, data = Request.get(f"{GET_BLASTS_URL}?{params}")
 
-    if isinstance(data, dict):
+    if isinstance(data, dict) and data["data"]["status"]:
         return data["data"]
 
     logger.error(f"failed to fetch blast report for {uid}, error:{data}")
