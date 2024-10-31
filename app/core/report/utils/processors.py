@@ -103,15 +103,14 @@ def fetch_alerts(api_clients: list) -> list[dict]:
 
     for username in s3_users:
         report: list = fetch_s3_user_report(username)
-        logger.info(dict(user=username, report=report))
         alerts += _format_api_report(username, report)
 
     for user in s9_users:
         report: list = fetch_s9_user_report(user["aid"])
-        logger.info(dict(user=user["aid"], report=report))
         alerts += _format_api_report(user["username"], report)
 
-    return sorted(alerts, key=lambda x: x["account"])
+    logger.info(dict(PREV=alerts))
+    return alerts
 
 
 def fetch_esme_counts(esme_clients: list) -> list[dict]:
