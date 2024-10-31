@@ -1,6 +1,6 @@
 from app.core.report.constants import NETWORKS, ALERTS_SPACE_ROW, ESME_SPACE_ROW
 
-from app.core.report.utils.misc import is_s3_client, get_previous_month
+from app.core.report.utils.misc import is_s3_client, is_sms_client, get_previous_month
 from app.core.report.utils.s3 import (
     fetch_reseller_users,
     fetch_s3_user_report,
@@ -90,6 +90,8 @@ def fetch_alerts(api_clients: list) -> list[dict]:
     alerts: list[dict] = []
 
     for client in api_clients:
+        if not is_sms_client(client.aid):
+            continue
         if is_s3_client(client.aid):
             s3_users.add(client.username)
         else:
@@ -118,5 +120,6 @@ def fetch_blasts(blast_clients: list) -> list[dict]:
     return [
         {"account": client.username, "report": _format_blast_report(report)}
         for client in blast_clients
-        if (report := fetch_blast_report(*extract_blast_params(client)))
+        if is_sms_client(client.key_id)
+        and (report := fetch_blast_report(*extract_blast_params(client)))
     ]
