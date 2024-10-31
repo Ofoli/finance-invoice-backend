@@ -1,8 +1,12 @@
-from ..constants import NETWORKS, ALERTS_SPACE_ROW, ESME_SPACE_ROW
+from app.core.report.constants import NETWORKS, ALERTS_SPACE_ROW, ESME_SPACE_ROW
 
-from .s3 import fetch_reseller_users, fetch_s3_user_report, fetch_s9_user_report
-from .s7 import fetch_blast_report, extract_blast_params, decrypt_message
-from .misc import is_s3_client, get_previous_month
+from app.core.report.utils.misc import is_s3_client, get_previous_month
+from app.core.report.utils.s3 import (
+    fetch_reseller_users,
+    fetch_s3_user_report,
+    fetch_s9_user_report,
+)
+from app.core.report.utils.s7 import fetch_blast_report, extract_blast_params, decrypt_message
 
 
 def _get_network(network: str) -> str:
@@ -99,7 +103,7 @@ def fetch_alerts(api_clients: list) -> list[dict]:
         report: list = fetch_s9_user_report(user["aid"])
         alerts += _format_api_report(user["username"], report)
 
-    return sorted(alerts, key=lambda x: x["account"])
+    return alerts
 
 
 def fetch_esme_counts(esme_clients: list) -> list[dict]:

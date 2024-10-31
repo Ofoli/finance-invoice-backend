@@ -70,7 +70,9 @@ def fetch_s9_user_report(aid: str) -> list:
 
 def fetch_reseller_users() -> list[str]:
     logger.info("fetching reseller users")
-    return [_create_api_user(user[5:-1]) for user in _fetch_report(GET_RESELLER_USERS_URL) if bool(user)]
+    return [
+        _create_api_user(user[5:-1]) for user in _fetch_report(GET_RESELLER_USERS_URL) if bool(user)
+    ]
 
 
 def _create_api_user(username: str) -> str:
@@ -82,7 +84,12 @@ def _create_api_user(username: str) -> str:
         try:
             prefix: str = extract_reseller_prefix(username)
             user = api_client.create(
-                dict(username=username, aid=S3_CLIENT_AID, reseller_prefix=prefix, rate=fetch_user_rate(username))
+                dict(
+                    username=username,
+                    aid=S3_CLIENT_AID,
+                    reseller_prefix=prefix,
+                    rate=fetch_user_rate(username),
+                )
             )
             return username
         except Exception as e:
