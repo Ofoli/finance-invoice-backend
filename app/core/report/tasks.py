@@ -22,7 +22,6 @@ from app.core.report.utils.misc import (
 @celery.shared_task(ignore_result=False)
 def initiate_s3_fetch_script() -> dict:
     payload: Dict[str, List[str] | str] = get_initiate_fetch_payload()
-    payload: Dict[str, List[str] | str] = get_initiate_fetch_payload()
     status, data = Request.post(INITIATE_FETCH_URL, payload)
     return handle_s3_script_response("S3", status, data)
 

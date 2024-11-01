@@ -1,15 +1,13 @@
 import logging
+
 from cryptography.fernet import Fernet
 
-
-from ...models.user import BlastClient
-from ...utils.enums import BlastClientLevel
-from ...constants import APP_LOGGER
-from ...utils.http import Request
-
-from ..constants import DEFAULT_RATE, GET_USER_RATE_URL, GET_BLASTS_URL
-
-from .misc import get_blast_period
+from app.core.constants import APP_LOGGER
+from app.core.models.user import BlastClient
+from app.core.report.constants import DEFAULT_RATE, GET_BLASTS_URL, GET_USER_RATE_URL
+from app.core.report.utils.misc import get_blast_period
+from app.core.utils.enums import BlastClientLevel
+from app.core.utils.http import Request
 
 logger: logging.Logger = logging.getLogger(APP_LOGGER)
 

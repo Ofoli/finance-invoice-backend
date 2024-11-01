@@ -1,4 +1,5 @@
 import os
+
 from app.core.constants import FILES_DIR
 
 # FILES
@@ -32,6 +33,7 @@ YEARLY_SERVICE_STATS = "/yearly-service-counts"
 # VALUES
 FINANCE_EMAIL = os.environ.get("FINANCE_EMAIL", "")
 SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL", "")
+NALO_RESELLER_PREFIX = "Resl_Nalo"
 S3_CLIENT_AID = "s3000000"
 EMAIL_CLIENT_AID = "999999999999999"
 DEFAULT_RATE = 0.032

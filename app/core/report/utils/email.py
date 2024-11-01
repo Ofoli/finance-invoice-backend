@@ -2,12 +2,11 @@ import logging
 from typing import Optional
 
 from app.core.clients.queries import Client, ModelClient
-from app.core.utils.enums import ClientType, ReportType
 from app.core.constants import APP_LOGGER
-
-from app.core.report.constants import EMAIL_CLIENT_AID, DEFAULT_EMAIL_RATE
+from app.core.report.constants import DEFAULT_EMAIL_RATE, EMAIL_CLIENT_AID
 from app.core.report.queries import Report
 from app.core.report.utils.misc import extract_reseller_prefix
+from app.core.utils.enums import ClientType, ReportType
 
 logger: logging.Logger = logging.getLogger(APP_LOGGER)
 

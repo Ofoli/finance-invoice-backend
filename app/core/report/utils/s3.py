@@ -1,42 +1,44 @@
 import logging
+from typing import Dict, List
 
-from ...clients.queries import Client
-from ...utils.enums import ClientType
-from ...constants import APP_LOGGER
-from ...utils.http import Request
-
-from ..constants import (
-    GET_USER_REPORT_URL,
-    GET_S9_USER_REPORT,
+from app.core.clients.queries import Client
+from app.core.constants import APP_LOGGER
+from app.core.report.constants import (
     GET_RESELLER_USERS_URL,
+    GET_S9_USER_REPORT,
+    GET_USER_REPORT_URL,
     S3_CLIENT_AID,
 )
-
-from .misc import get_previous_month, get_report_period, extract_reseller_prefix
-from .s7 import fetch_user_rate
-
+from app.core.report.utils.misc import (
+    extract_reseller_prefix,
+    get_previous_month,
+    get_report_period,
+    is_nalo_reseller,
+    is_s3_client,
+)
+from app.core.report.utils.s7 import fetch_user_rate
+from app.core.utils.enums import ClientType
+from app.core.utils.http import Request
 
 logger: logging.Logger = logging.getLogger(APP_LOGGER)
 
 
-def get_initiate_fetch_payload() -> dict[str, list[str] | str]:
+def get_initiate_fetch_payload() -> Dict[str, list[str] | str]:
+    resellers = set()
     payload = dict(esmes=[], apiusers=[], resellers=[])
-    clients = Client.get_all()
 
-    for client_type, data in clients.items():
-        if client_type == ClientType.API.value:
-            for client in data:
-                if client.reseller_prefix:  # type: ignore
-                    payload["resellers"].append(client.reseller_prefix)  # type: ignore
-                else:
-                    payload["apiusers"].append(client.username)
-        if client_type == ClientType.ESME.value:
-            payload["esmes"] = [client.username for client in data]
+    for client in Client.get_api_clients():
+        if bool(client.reseller_prefix) and not is_nalo_reseller(client.reseller_prefix):
+            resellers.add(client.reseller_prefix)
+        elif is_s3_client(str(client.aid)):
+            payload["apiusers"].append(client.username)
 
+    payload["resellers"] = list(resellers)
+    payload["esmes"] = [client.username for client in Client.get_esme_clients()]
     return {**payload, "date": get_previous_month()}
 
 
-def handle_s3_script_response(name: str, status: bool, data: str | dict) -> dict[str, str | dict]:
+def handle_s3_script_response(name: str, status: bool, data: str | dict) -> Dict[str, str | dict]:
     if not status:
         logger.error(f"{name} report script initiation failed: {data}")
         # send email or sms alert
@@ -68,7 +70,7 @@ def fetch_s9_user_report(aid: str) -> list:
     return _fetch_report(url)
 
 
-def fetch_reseller_users() -> list[str]:
+def fetch_reseller_users() -> List[str]:
     logger.info("fetching reseller users")
     return [
         _create_api_user(user[5:-1]) for user in _fetch_report(GET_RESELLER_USERS_URL) if bool(user)
