@@ -72,8 +72,8 @@ def zip_blast_reports(src_files: list[str], dst_file: str) -> str:
     return dst_path
 
 
-def is_s3_client(aid: str) -> bool:
-    return aid == S3_CLIENT_AID
+def is_s3_client(aid: Column[str]) -> bool:
+    return str(aid) == S3_CLIENT_AID
 
 
 def is_nalo_reseller(prefix: Column[str]) -> bool:
