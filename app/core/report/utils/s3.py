@@ -30,9 +30,11 @@ def get_initiate_fetch_payload() -> Dict[str, list[str] | str]:
     payload = dict(esmes=[], apiusers=[], resellers=[])
 
     for client in Client.get_api_clients():
+        if not is_s3_client(client.aid):
+            continue
         if bool(client.reseller_prefix) and not is_nalo_reseller(client.reseller_prefix):
             resellers.add(client.reseller_prefix)
-        elif is_s3_client(str(client.aid)):
+        else:
             payload["apiusers"].append(client.username)
 
     payload["resellers"] = list(resellers)
