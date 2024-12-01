@@ -5,7 +5,9 @@ from app.core.clients.queries import Client
 from app.core.constants import APP_LOGGER
 from app.core.report.constants import (
     GET_RESELLER_USERS_URL,
+    GET_RUIDS_URL,
     GET_S9_USER_REPORT,
+    GET_S9_USERS,
     GET_USER_REPORT_URL,
     S3_CLIENT_AID,
 )
@@ -53,48 +55,85 @@ def _fetch_report(url: str) -> list:
     if status and not isinstance(data, str) and data.get("status"):
         return data["data"]
 
-    logger.error(f"failed to fetch report with url:{url}")
+    logger.error({"action": "_fetch_report", "url": url})
+    return []
+
+
+def _fetch_new_s9_users(prefixes: list) -> list:
+    key = "|".join(prefixes)
+    return _fetch_report(f"{GET_S9_USERS}?prefixes={key}")
+
+
+def _fetch_ruids(users: list) -> List[dict]:
+    status, data = Request.post(GET_RUIDS_URL, data={"users": users})
+    if status and not isinstance(data, str) and data.get("status"):
+        return data["data"]
+
+    logger.error({"action": "_fetch_ruids", "data": users, "details": data})
     return []
 
 
 def fetch_s3_user_report(username: str) -> list:
-    logger.info(f"fetching report for user: {username}")
+    logger.info({"action": "fetch_s3_user_report", "username": username})
     url = f"{GET_USER_REPORT_URL}?username={username}"
     return report[0]["data"] if len(report := _fetch_report(url)) else []
 
 
 def fetch_s9_user_report(aid: str) -> list:
-    logger.info(f"fetching report for user: {aid}")
+    logger.info({"action": "fetch_s9_user_report", "aid": aid})
     sdt, edt = get_report_period()
     url = f"{GET_S9_USER_REPORT}/?aid={aid}&start_date={sdt}&end_date={edt}"
     return _fetch_report(url)
 
 
 def fetch_reseller_users() -> List[str]:
-    logger.info("fetching reseller users")
     return [
         _create_api_user(user[5:-1]) for user in _fetch_report(GET_RESELLER_USERS_URL) if bool(user)
     ]
 
 
-def _create_api_user(username: str) -> str:
+def fetch_s9_users(accounts: List[dict]) -> List[dict]:
+    prefixes: List[str] = []
+    usernames: List[str] = []
+    s9_users: List[dict] = accounts[:]
+
+    for account in accounts:
+        prefixes.append(account["reseller"])
+        usernames.append(account["username"])
+
+    new_users: List[str] = [
+        username
+        for user in _fetch_new_s9_users(prefixes)
+        if user and (username := user[5:-1]) not in usernames
+    ]
+
+    return s9_users + [
+        {
+            "username": _create_api_user(account["user"], aid=account["ruid"]),
+            "aid": account["ruid"],
+        }
+        for account in _fetch_ruids(new_users)
+    ]
+
+
+def _create_api_user(username: str, aid: str = S3_CLIENT_AID) -> str:
     api_client = Client(ClientType.API.value)
     user = api_client.get_client_by_username(username)
 
     if user is None:
-        logger.info("Attempting to create api client for {}".format(username))
+        logger.info({"action": "_create_api_user", "data": f"{username}_{aid}"})
         try:
             prefix: str = extract_reseller_prefix(username)
             user = api_client.create(
                 dict(
+                    aid=aid,
                     username=username,
-                    aid=S3_CLIENT_AID,
                     reseller_prefix=prefix,
                     rate=fetch_user_rate(username),
                 )
             )
             return username
         except Exception as e:
-            logger.error("failed to create s3 api user {} with error {}".format(username, e))
+            logger.error({"action": "_create_api_user", "data": f"{username}_{aid}", "details": e})
             return username
     return str(user.username)

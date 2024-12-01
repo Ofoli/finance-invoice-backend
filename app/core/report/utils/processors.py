@@ -1,12 +1,12 @@
-from app.core.report.constants import NETWORKS, ALERTS_SPACE_ROW, ESME_SPACE_ROW
-
-from app.core.report.utils.misc import is_s3_client, is_sms_client, get_previous_month
+from app.core.report.constants import ALERTS_SPACE_ROW, ESME_SPACE_ROW, NETWORKS
+from app.core.report.utils.misc import get_previous_month, is_s3_client, is_sms_client
 from app.core.report.utils.s3 import (
     fetch_reseller_users,
     fetch_s3_user_report,
     fetch_s9_user_report,
+    fetch_s9_users,
 )
-from app.core.report.utils.s7 import fetch_blast_report, extract_blast_params, decrypt_message
+from app.core.report.utils.s7 import decrypt_message, extract_blast_params, fetch_blast_report
 
 
 def _get_network(network: str) -> str:
@@ -95,13 +95,19 @@ def fetch_alerts(api_clients: list) -> list[dict]:
         if is_s3_client(client.aid):
             s3_users.add(client.username)
         else:
-            s9_users.append({"aid": client.aid, "username": client.username})
+            s9_users.append(
+                {
+                    "aid": client.aid,
+                    "username": client.username,
+                    "reseller": client.reseller_prefix,
+                }
+            )
 
     for username in s3_users:
         report: list = fetch_s3_user_report(username)
         alerts += _format_api_report(username, report)
 
-    for user in s9_users:
+    for user in fetch_s9_users(s9_users):
         report: list = fetch_s9_user_report(user["aid"])
         alerts += _format_api_report(user["username"], report)
 
