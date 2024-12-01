@@ -1,12 +1,19 @@
-import os
 import csv
+import os
 import zipfile
-
 from datetime import datetime, timedelta
+
+from sqlalchemy import Column
 
 from app.core.constants import FILES_DIR
 from app.core.notifications.email import AttachmentEmailNotification
-from app.core.report.constants import EMAIL_CLIENT_AID, S3_CLIENT_AID, FINANCE_EMAIL, SUPPORT_EMAIL
+from app.core.report.constants import (
+    EMAIL_CLIENT_AID,
+    FINANCE_EMAIL,
+    NALO_RESELLER_PREFIX,
+    S3_CLIENT_AID,
+    SUPPORT_EMAIL,
+)
 from app.core.utils.enums import ServiceType
 
 
@@ -67,6 +74,10 @@ def zip_blast_reports(src_files: list[str], dst_file: str) -> str:
 
 def is_s3_client(aid: str) -> bool:
     return aid == S3_CLIENT_AID
+
+
+def is_nalo_reseller(prefix: Column[str]) -> bool:
+    return str(prefix) == NALO_RESELLER_PREFIX
 
 
 def is_sms_client(key: str | int) -> bool:

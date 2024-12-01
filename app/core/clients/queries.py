@@ -1,7 +1,6 @@
-from typing import List, Dict, Union, Optional
+from typing import Dict, List, Optional, Union
 
-from ..models import db
-
+from app.core.models import db
 from app.core.models.user import ApiClient, BlastClient, ESMEClient
 from app.core.utils.enums import ClientType
 
@@ -15,8 +14,13 @@ class Client:
             ClientType.BLAST.value: BlastClient,
         }.get(client_type, ESMEClient)
 
-    # def __eq__(self, other):
-    #     return isinstance(other, Client) and self._Model == other._Model
+    @staticmethod
+    def get_api_clients() -> List[ApiClient]:
+        return ApiClient.query.all()
+
+    @staticmethod
+    def get_esme_clients() -> List[ESMEClient]:
+        return ESMEClient.query.all()
 
     @staticmethod
     def get_all() -> Dict[str, List[ModelClient]]:

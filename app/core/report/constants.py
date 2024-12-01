@@ -1,4 +1,5 @@
 import os
+
 from app.core.constants import FILES_DIR
 
 # FILES
@@ -15,7 +16,9 @@ INITIATE_FETCH_URL = f"{_s3_BASE_URL}/initiate-fetch.php"
 INITIATE_ETZ_URL = f"{_s3_BASE_URL}/initiate-etz-report.php"
 GET_RESELLER_USERS_URL = f"{_s3_BASE_URL}/get-reseller-users.php"
 GET_USER_REPORT_URL = f"{_s3_BASE_URL}/report.php"
-GET_BLASTS_URL = f"{_s7_BASE_URL}/invoice/blast"
+GET_S9_USERS = f"{_s3_BASE_URL}/get-s9-users.php"
+GET_BLASTS_URL = f"{_s7_BASE_URL}/invoice/api/blast.php"
+GET_RUIDS_URL = f"{_s7_BASE_URL}/invoice/api/ruid.php"
 GET_USER_RATE_URL = f"{_s7_BASE_URL}/fetch-rates.php/"
 GET_S9_USER_REPORT = f"{_s9_BASE_URL}/network-report"
 
@@ -32,6 +35,7 @@ YEARLY_SERVICE_STATS = "/yearly-service-counts"
 # VALUES
 FINANCE_EMAIL = os.environ.get("FINANCE_EMAIL", "")
 SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL", "")
+NALO_RESELLER_PREFIX = "Resl_Nalo"
 S3_CLIENT_AID = "s3000000"
 EMAIL_CLIENT_AID = "999999999999999"
 DEFAULT_RATE = 0.032
