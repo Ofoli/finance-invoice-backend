@@ -1,9 +1,13 @@
+import logging
 from http import HTTPStatus
-from flask import request, abort
+
+from flask import abort, request
 from flask.views import MethodView
 
+from app.core.constants import APP_LOGGER, WHITELISTED_IPS
 from app.core.models.user import AuthUser
-from app.core.constants import WHITELISTED_IPS
+
+logger = logging.getLogger(APP_LOGGER)
 
 
 class IsAuthedUserMixin(MethodView):
@@ -29,6 +33,7 @@ class IsIPWhitelistedMixin(MethodView):
             source_ip = request.headers.getlist("X-Forwarded-For")[0]
 
         if source_ip not in WHITELISTED_IPS.split(","):
+            logger.error(dict(message=f"Ip {source_ip} is not whitelisted"))
             abort(HTTPStatus.FORBIDDEN)
 
         return super().dispatch_request(*args, **kwargs)
