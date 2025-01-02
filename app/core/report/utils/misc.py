@@ -89,18 +89,14 @@ def get_report_period() -> tuple[str, str]:
     first_day_of_current_month = today.replace(day=1)
     last_day_of_previous_month = first_day_of_current_month - timedelta(days=1)
     first_day_of_previous_month = last_day_of_previous_month.replace(day=1)
-    return first_day_of_previous_month.strftime("%Y-%m-%d"), last_day_of_previous_month.strftime(
-        "%Y-%m-%d"
-    )
+    return first_day_of_previous_month.strftime("%Y-%m-%d"), last_day_of_previous_month.strftime("%Y-%m-%d")
 
 
 def get_blast_period() -> tuple[str, str]:
-    month = get_previous_month()
-    start_date = f"{month}-01"
-    year, mth = month.split("-")
-    next_month = str(value + 1 if (value := int(mth)) != 12 else 1)
-    end_date = f"{year}-{next_month.zfill(2)}-01"
-    return start_date, end_date
+    today = datetime.today()
+    first_day_of_current_month = today.replace(day=1)
+    first_day_of_previous_month = (first_day_of_current_month - timedelta(days=1)).replace(day=1)
+    return first_day_of_previous_month.strftime("%Y-%m-%d"), first_day_of_current_month.strftime("%Y-%m-%d")
 
 
 def get_year_period() -> tuple[str, str]:
